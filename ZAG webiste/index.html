@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAG BRAKES | SAFETY IN EVERY STOP</title>
+    <meta name="description" content="ZAG Brakes: Professional manufacturer of semi-metallic and sintered brake pads. Safety In Every Stop.">
+    
+    <style>
+        /* 完全对标包装盒的配色方案 */
+        :root {
+            --zag-red: #E60012; /* 包装盒主红色 */
+            --zag-black: #1A1A1A; /* 包装盒深黑色 */
+            --zag-white: #FFFFFF;
+        }
+
+        body { 
+            font-family: 'Arial Black', Gadget, sans-serif; 
+            margin: 0; 
+            background-color: var(--zag-white); 
+            color: var(--zag-black);
+            overflow-x: hidden;
+        }
+
+        /* 顶部导航 */
+        header {
+            background-color: var(--zag-black);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 5px solid var(--zag-red);
+        }
+
+        .logo-box {
+            background-color: var(--zag-black);
+            border: 2px solid white;
+            padding: 5px 15px;
+            display: inline-block;
+        }
+
+        .logo-text {
+            font-size: 30px;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .logo-text span { color: var(--zag-red); }
+
+        /* 模拟包装斜切效果的 Hero Area */
+        .hero {
+            position: relative;
+            background-color: var(--zag-black);
+            color: white;
+            padding: 100px 5%;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--zag-red);
+            clip-path: polygon(100% 20%, 100% 100%, 0% 100%);
+            z-index: 1;
+            opacity: 0.9;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero h2 {
+            font-size: 65px;
+            margin: 0;
+            line-height: 0.9;
+        }
+
+        .slogan-tag {
+            background-color: var(--zag-red);
+            display: inline-block;
+            padding: 5px 15px;
+            font-size: 20px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* 产品展示 */
+        .product-section { padding: 80px 5%; }
+        
+        .product-title {
+            border-left: 10px solid var(--zag-red);
+            padding-left: 15px;
+            font-size: 32px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--zag-red);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background-color: var(--zag-black);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .card-body { padding: 20px; text-align: center; }
+        
+        /* 认证图标模拟包装底部 */
+        .certification {
+            background: #f4f4f4;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .cert-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            filter: grayscale(100%);
+            opacity: 0.6;
+        }
+
+        footer {
+            background: var(--zag-black);
+            color: white;
+            padding: 60px 5%;
+            text-align: center;
+        }
+
+        .footer-link {
+            color: var(--zag-red);
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 40px; }
+            .hero::after { clip-path: polygon(100% 50%, 100% 100%, 0% 100%); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-box">
+        <p class="logo-text">ZAG <span>BRAKES</span></p>
+    </div>
+    <nav style="display: flex; gap: 20px; font-size: 14px;">
+        <span style="cursor:pointer">PRODUCTS</span>
+        <span style="cursor:pointer">OE SEARCH</span>
+        <span style="cursor:pointer">CONTACT</span>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h2>SEMI METALLIC<br>SERIES</h2>
+        <div class="slogan-tag">SAFETY IN EVERY STOP.</div>
+        <p style="margin-top: 30px; font-size: 18px; max-width: 500px;">
+            High-performance friction materials engineered for durability and noiseless braking. 
+            The trusted choice for professional riders.
+        </p>
+    </div>
+</section>
+
+<section class="product-section">
+    <div class="product-title">Our Main Products</div>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header">BRAKE PADS</div>
+            <div class="card-body">
+                <p>Advanced Semi-Metallic Formula</p>
+                <p style="color: var(--zag-red); font-weight: bold;">www.zagbrakes.com</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">BRAKE SHOES</div>
+            <div class="card-body">
+                <p>Extreme Durability & Grip</p>
+                <p style="color: var(--zag-red); font-weight: bold;">www.zagbrakes.com</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">CLUTCH PLATES</div>
+            <div class="card-body">
+                <p>Powersports Performance</p>
+                <p style="color: var(--zag-red); font-weight: bold;">www.zagbrakes.com</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="certification">
+    <p style="font-size: 12px; margin-bottom: 20px; color: #888;">CERTIFIED QUALITY STANDARDS</p>
+    <div class="cert-icons">
+        <span>ISO9001</span>
+        <span>RoHS</span>
+        <span>E-MARK</span>
+        <span>TS16949</span>
+    </div>
+</div>
+
+<footer>
+    <p>MANUFACTURED BY UCAN INDUSTRIES</p>
+    <p style="margin: 20px 0;">
+        <a href="mailto:info@zagbrakes.com" class="footer-link">INQUIRY NOW</a>
+    </p>
+    <p style="font-size: 12px; color: #666;">© 2026 ZAG BRAKES. All Rights Reserved.</p>
+    <p style="font-size: 12px; color: #666;">SAFETY IN EVERY STOP.</p>
+</footer>
+
+</body>
+</html>
