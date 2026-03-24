@@ -3,250 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZAG BRAKES | Leading Chinese Manufacturer of Powersports Clutches & Brakes</title>
-    <meta name="description" content="ZAG Brakes: Professional manufacturer of semi-metallic and sintered brake pads for ATV, UTV, and Motorcycles. Safety In Every Stop.">
-    
+    <title>ZAG - LEADING CHINESE MANUFACTURER OF POWERSPORTS CLUTCHES</title>
     <style>
-        /* 完全对标包装盒的配色方案 */
-        :root {
-            --zag-red: #E60012; 
-            --zag-black: #1A1A1A; 
-            --zag-white: #FFFFFF;
-        }
+        /* 基础样式 */
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        header { background: #333; color: #fff; padding: 20px; text-align: center; position: relative; }
+        
+        /* Logo 与 Slogan 布局：Slogan 放在 Logo 下面 */
+        .logo-container { margin-bottom: 10px; }
+        .logo { font-size: 48px; font-weight: bold; color: #e11d48; text-transform: uppercase; }
+        .slogan { font-size: 14px; color: #ccc; letter-spacing: 2px; margin-top: 5px; }
 
-        body { 
-            font-family: 'Arial Black', Gadget, sans-serif; 
-            margin: 0; 
-            background-color: var(--zag-white); 
-            color: var(--zag-black);
-            overflow-x: hidden;
-        }
+        /* 导航栏 */
+        nav { background: #444; display: flex; justify-content: center; position: relative; z-index: 100; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; }
+        nav ul li { position: relative; }
+        nav ul li a { display: block; padding: 15px 25px; color: white; text-decoration: none; }
+        nav ul li a:hover { background: #555; }
 
-        /* 顶部导航 */
-        header {
-            background-color: var(--zag-black);
-            color: white;
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 5px solid var(--zag-red);
-        }
-
-        .logo-box {
-            background-color: var(--zag-black);
-            border: 2px solid white;
-            padding: 5px 15px;
-            display: inline-block;
-        }
-
-        .logo-text {
-            font-size: 30px;
-            font-weight: 900;
-            margin: 0;
-            letter-spacing: -1px;
-            text-decoration: none;
-            color: white;
-        }
-
-        .logo-text span { color: var(--zag-red); }
-
-        /* 模拟包装斜切效果的 Hero Area */
-        .hero {
-            position: relative;
-            background-color: var(--zag-black);
-            color: white;
-            padding: 100px 5%;
-            overflow: hidden;
-        }
-
-        .hero::after {
-            content: "";
+        /* PRODUCTS 下拉菜单样式 */
+        .dropdown-content {
+            display: none;
             position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--zag-red);
-            clip-path: polygon(100% 20%, 100% 100%, 0% 100%);
+            background-color: #f9f9f9;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             z-index: 1;
-            opacity: 0.9;
         }
+        .dropdown-content a { color: black; padding: 12px 16px; text-decoration: none; display: block; text-align: left; }
+        .dropdown-content a:hover { background-color: #f1f1f1; }
+        .dropdown:hover .dropdown-content { display: block; }
 
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 800px;
+        /* 主横幅 (Hero Section) */
+        .hero { 
+            background: #e11d48; color: white; padding: 60px 20px; text-align: center; 
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
         }
+        .hero h1 { font-size: 36px; margin: 0; }
 
-        .hero h2 {
-            font-size: 65px;
-            margin: 0;
-            line-height: 0.9;
-        }
-
-        .slogan-tag {
-            background-color: var(--zag-red);
-            display: inline-block;
-            padding: 5px 15px;
-            font-size: 20px;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        /* 产品展示 */
-        .product-section { padding: 80px 5%; }
-        
-        .product-title {
-            border-left: 10px solid var(--zag-red);
-            padding-left: 15px;
-            font-size: 32px;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .card {
-            background: white;
-            border: 1px solid #ddd;
-            transition: 0.3s;
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--zag-red);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .card-header {
-            background-color: var(--zag-black);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 20px;
-        }
-
-        .card-body { padding: 30px 20px; text-align: center; }
-        
-        /* 认证图标 */
-        .certification {
-            background: #f4f4f4;
-            padding: 40px;
-            text-align: center;
-        }
-
-        .cert-icons {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 30px;
-            font-weight: bold;
-            color: #888;
-        }
-
-        .btn-contact {
-            background-color: var(--zag-red);
-            color: white;
-            padding: 15px 40px;
-            text-decoration: none;
-            font-size: 20px;
-            display: inline-block;
-            margin-top: 20px;
-            border-radius: 2px;
-        }
-
-        footer {
-            background: var(--zag-black);
-            color: white;
-            padding: 60px 5%;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .hero h2 { font-size: 40px; }
-            .hero::after { clip-path: polygon(100% 50%, 100% 100%, 0% 100%); }
+        /* 内容区域 */
+        .content { padding: 40px; text-align: center; }
+        .contact-btn { 
+            display: inline-block; padding: 12px 30px; background: #e11d48; 
+            color: white; text-decoration: none; border-radius: 5px; font-weight: bold;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-box">
-        <a href="/" class="logo-text">ZAG <span>BRAKES</span></a>
+    <div class="logo-container">
+        <div class="logo">ZAG</div>
+        <div class="slogan">SAFETY IN EVERY STOP</div>
     </div>
-    <nav style="display: flex; gap: 20px; font-size: 14px; font-weight: bold;">
-        <span style="cursor:pointer">PRODUCTS</span>
-        <span style="cursor:pointer">CATALOG</span>
-        <span style="cursor:pointer">CONTACT</span>
-    </nav>
 </header>
 
-<section class="hero">
-    <div class="hero-content">
-        <p style="color: var(--zag-red); font-size: 18px; margin-bottom: 10px;">LEADING CHINESE MANUFACTURER</p>
-        <h2>POWERSPORTS<br>CLUTCH & BRAKE</h2>
-        <div class="slogan-tag">SAFETY IN EVERY STOP.</div>
-        <p style="margin-top: 30px; font-size: 18px; max-width: 600px; font-family: Arial, sans-serif;">
-            Professional-grade friction materials for BRP, Can-Am, Honda, and CF MOTO. 
-            Engineered for durability, noiseless braking, and extreme off-road conditions.
-        </p>
-    </div>
-</section>
+<nav>
+    <ul>
+        <li><a href="#">HOME</a></li>
+        <li class="dropdown">
+            <a href="#">PRODUCTS ▾</a>
+            <div class="dropdown-content">
+                <a href="#">Clutches</a>
+                <a href="#">Brake Pads</a>
+                <a href="#">Transmission Belts</a>
+            </div>
+        </li>
+        <li><a href="#">CATALOG</a></li>
+        <li><a href="mailto:samzh_2000@hotmail.com">CONTACT</a></li>
+    </ul>
+</nav>
 
-<section class="product-section">
-    <div class="product-title">Premium Components</div>
-    <div class="grid">
-        <div class="card">
-            <div class="card-header">BRAKE PADS</div>
-            <div class="card-body">
-                <p style="font-family: Arial, sans-serif;">Advanced Semi-Metallic & Sintered Formula for ATVs and Motorcycles.</p>
-                <p style="color: var(--zag-red); font-weight: bold;">OEM Quality Standards</p>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">CLUTCH PLATES</div>
-            <div class="card-body">
-                <p style="font-family: Arial, sans-serif;">Heavy-duty clutch rebuild kits compatible with p-Drive systems.</p>
-                <p style="color: var(--zag-red); font-weight: bold;">BRP & Can-Am Specialist</p>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">BRAKE SHOES</div>
-            <div class="card-body">
-                <p style="font-family: Arial, sans-serif;">Extreme Durability and Heat Resistance for everyday safety.</p>
-                <p style="color: var(--zag-red); font-weight: bold;">Exporting Globally</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<div class="certification">
-    <p style="font-size: 12px; margin-bottom: 20px; color: #888;">CERTIFIED QUALITY STANDARDS</p>
-    <div class="cert-icons">
-        <span>ISO9001</span>
-        <span>RoHS</span>
-        <span>E-MARK</span>
-        <span>TS16949</span>
-    </div>
+<div class="hero">
+    <h1>POWERSPORTS CLUTCH & BRAKE</h1>
+    <p>LEADING CHINESE MANUFACTURER OF POWERSPORTS CLUTCHES</p>
 </div>
 
-<footer>
-    <p style="letter-spacing: 2px;">MANUFACTURED BY UCAN INDUSTRIES</p>
-    <p style="font-family: Arial, sans-serif; color: #ccc; margin: 10px 0;">Specialized in Clutch Kits & Friction Materials</p>
-    
-    <a href="mailto:info@zagbrakes.com" class="btn-contact">INQUIRY NOW</a>
-    
-    <div style="margin-top: 30px; font-size: 14px; color: #888; font-family: Arial, sans-serif;">
-        <p>Expertly serving Turkish, European, and Global Markets.</p>
-        <p>© 2026 ZAG BRAKES. All Rights Reserved.</p>
-    </div>
-</footer>
+<div class="content">
+    <h2>Professional Components</h2>
+    <p>Specializing in clutches, brake pads, and belts for BRP, CFMOTO, and more.</p>
+    <br>
+    <a href="mailto:samzh_2000@hotmail.com" class="contact-btn">Email Us Now</a>
+</div>
 
 </body>
 </html>
