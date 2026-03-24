@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZAG BRAKES | Leading Chinese Manufacturer</title>
+    <title>ZAG BRAKES | Professional Brake Friction & Components Manufacturer</title>
     <style>
         :root {
             --zag-red: #E60012; 
@@ -15,9 +15,11 @@
             font-family: 'Arial Black', Gadget, sans-serif; 
             margin: 0; padding: 0;
             background-color: var(--zag-white); 
+            color: var(--zag-black);
+            scroll-behavior: smooth;
         }
 
-        /* --- 顶部导航区域 --- */
+        /* --- Header --- */
         header {
             background-color: var(--zag-black);
             color: white;
@@ -26,9 +28,9 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 5px solid var(--zag-red);
+            position: sticky; top: 0; z-index: 1000;
         }
 
-        /* 这里的布局确保 Slogan 在 Logo 正下方 */
         .logo-group {
             display: flex;
             flex-direction: column;
@@ -37,78 +39,64 @@
             padding: 5px 15px;
         }
 
-        .logo-text {
-            font-size: 28px;
-            font-weight: 900;
-            text-decoration: none;
-            color: white;
-            line-height: 1;
-        }
+        .logo-text { font-size: 28px; font-weight: 900; text-decoration: none; color: white; line-height: 1; }
         .logo-text span { color: var(--zag-red); }
+        .header-slogan { font-size: 9px; color: #ccc; letter-spacing: 1.5px; font-family: Arial, sans-serif; margin-top: 4px; text-transform: uppercase; }
 
-        .header-slogan {
-            font-size: 9px;
-            color: #ccc;
-            letter-spacing: 1.5px;
-            font-family: Arial, sans-serif;
-            margin-top: 4px;
-            text-transform: uppercase;
-        }
-
-        /* 导航菜单 */
-        nav { display: flex; gap: 25px; font-size: 14px; }
-        nav a { color: white; text-decoration: none; cursor: pointer; }
+        nav { display: flex; gap: 25px; font-size: 14px; align-items: center; }
+        nav a { color: white; text-decoration: none; cursor: pointer; transition: 0.3s; }
+        nav a:hover { color: var(--zag-red); }
         
-        /* 下拉菜单 */
-        .dropdown { position: relative; display: inline-block; }
+        /* Dropdown */
+        .dropdown { position: relative; }
         .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-            top: 20px;
-            z-index: 100;
+            display: none; position: absolute; background-color: #f9f9f9;
+            min-width: 180px; box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            top: 25px; z-index: 100;
         }
         .dropdown-content a {
             color: black; padding: 12px 16px; display: block;
             font-family: Arial, sans-serif; font-size: 13px;
         }
-        .dropdown-content a:hover { background-color: #f1f1f1; }
+        .dropdown-content a:hover { background-color: #eee; border-left: 4px solid var(--zag-red); }
         .dropdown:hover .dropdown-content { display: block; }
 
-        /* --- Hero 区域 --- */
+        /* --- Hero --- */
         .hero {
-            position: relative;
-            background-color: var(--zag-black);
-            color: white;
-            padding: 100px 5% 120px;
-            overflow: hidden;
+            position: relative; background-color: var(--zag-black); color: white;
+            padding: 100px 5% 150px; overflow: hidden;
         }
-
         .hero::after {
-            content: "";
-            position: absolute;
-            bottom: 0; right: 0; width: 100%; height: 100%;
-            background: var(--zag-red);
-            clip-path: polygon(100% 20%, 100% 100%, 0% 100%);
-            z-index: 1;
-            opacity: 0.9;
+            content: ""; position: absolute; bottom: 0; right: 0; width: 100%; height: 100%;
+            background: var(--zag-red); clip-path: polygon(100% 20%, 100% 100%, 0% 100%);
+            z-index: 1; opacity: 0.9;
         }
-
         .hero-content { position: relative; z-index: 2; }
-        .hero h2 { font-size: 60px; margin: 0; line-height: 0.9; }
-        
-        /* --- 内容展示 --- */
-        .product-section { padding: 60px 5%; }
-        .product-title { border-left: 10px solid var(--zag-red); padding-left: 15px; font-size: 32px; margin-bottom: 40px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .card { border: 1px solid #ddd; transition: 0.3s; }
-        .card-header { background-color: var(--zag-black); color: white; padding: 15px; text-align: center; font-size: 20px; }
-        .card-body { padding: 25px; text-align: center; font-family: Arial, sans-serif; }
+        .hero h2 { font-size: 55px; margin: 0; line-height: 1; text-transform: uppercase; }
+        .hero p.sub-text { color: var(--zag-red); font-size: 18px; margin-bottom: 10px; letter-spacing: 2px; }
 
-        footer { background: var(--zag-black); color: white; padding: 50px 5%; text-align: center; }
-        .btn-contact { background-color: var(--zag-red); color: white; padding: 15px 40px; text-decoration: none; font-size: 18px; display: inline-block; }
+        /* --- About Us --- */
+        .about-section { padding: 80px 5%; background: #fdfdfd; line-height: 1.6; }
+        .about-container { max-width: 1000px; margin: 0 auto; font-family: Arial, sans-serif; }
+        .section-title { border-left: 10px solid var(--zag-red); padding-left: 15px; font-size: 32px; font-family: 'Arial Black'; margin-bottom: 30px; text-transform: uppercase; }
+        .about-text { font-size: 17px; color: #444; }
+        .about-text strong { color: var(--zag-black); }
+
+        /* --- Products Grid --- */
+        .product-section { padding: 60px 5%; background: white; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card { border: 1px solid #ddd; transition: 0.3s; position: relative; }
+        .card:hover { transform: translateY(-10px); border-color: var(--zag-red); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .card-header { background-color: var(--zag-black); color: white; padding: 15px; text-align: center; font-size: 20px; text-transform: uppercase; }
+        .card-body { padding: 30px; text-align: center; font-family: Arial, sans-serif; }
+
+        /* --- Contact Section --- */
+        .contact-section { padding: 60px 5%; background: var(--zag-black); color: white; text-align: center; }
+        .contact-info { margin: 30px 0; font-family: Arial, sans-serif; font-size: 18px; }
+        .contact-info p { margin: 10px 0; }
+        .contact-info a { color: var(--zag-red); text-decoration: none; font-weight: bold; }
+
+        footer { background: #000; color: #666; padding: 40px 5%; text-align: center; font-family: Arial, sans-serif; font-size: 13px; }
 
         @media (max-width: 768px) {
             header { flex-direction: column; gap: 15px; }
@@ -128,61 +116,76 @@
         <div class="dropdown">
             <a class="dropbtn">PRODUCTS ▾</a>
             <div class="dropdown-content">
-                <a href="#">Brake Pads</a>
-                <a href="#">Clutch Kits</a>
-                <a href="#">Brake Shoes</a>
-                <a href="#">Drive Belts</a>
+                <a href="#products">BRAKE PAD</a>
+                <a href="#products">BRAKE DISC</a>
+                <a href="#products">BRAKE SHOE</a>
             </div>
         </div>
-        <a href="#">CATALOG</a>
-        <a href="mailto:samzh_2000@hotmail.com">CONTACT</a>
+        <a href="#about">ABOUT US</a>
+        <a href="#contact">CONTACT</a>
     </nav>
 </header>
 
 <section class="hero">
     <div class="hero-content">
-        <p style="color: var(--zag-red); font-size: 16px; margin-bottom: 10px;">LEADING CHINESE MANUFACTURER</p>
-        <h2>POWERSPORTS<br>CLUTCH & BRAKE</h2>
-        <p style="margin-top: 30px; font-size: 17px; max-width: 600px; font-family: Arial, sans-serif; font-weight: normal;">
-            Premium friction materials engineered for BRP, CFMOTO, and more. 
-            Reliable performance in extreme conditions.
+        <p class="sub-text">LEADING CHINESE MANUFACTURER</p>
+        <h2>HIGH-PERFORMANCE<br>BRAKING SYSTEMS</h2>
+        <p style="margin-top: 30px; font-size: 18px; max-width: 650px; font-family: Arial, sans-serif; font-weight: normal; opacity: 0.9;">
+            Professional manufacturer of premium friction materials for ATV, UTV, and Motorcycles. 
+            Engineered for noiseless performance and ultimate safety.
         </p>
     </div>
 </section>
 
-<section class="product-section">
-    <div class="product-title">PREMIUM COMPONENTS</div>
-    <div class="grid">
+<section id="about" class="about-section">
+    <div class="about-container">
+        <div class="section-title">Professional Brake Solutions</div>
+        <div class="about-text">
+            <p><strong>ZAG BRAKES</strong> is a leading specialist in the manufacturing of high-performance braking components for the global powersports market. With a focus on <strong>Professionalism, High-Performance, and Safety</strong>, we provide world-class solutions for all major motorcycle brands.</p>
+            <p>Our products are engineered to provide a <strong>Silent and Comfortable</strong> braking experience without compromising on stopping power. Using advanced semi-metallic and sintered formulas, ZAG components ensure extreme durability and stable friction coefficients under the most demanding conditions.</p>
+            <p>Whether it is on the street or off-road, our mission remains the same: <strong>Safety In Every Stop.</strong></p>
+        </div>
+    </div>
+</section>
+
+<section id="products" class="product-section">
+    <div class="section-title" style="margin-left: 5%;">OUR PRODUCTS</div>
+    <div class="grid" style="padding: 0 5%;">
         <div class="card">
-            <div class="card-header">BRAKE PADS</div>
+            <div class="card-header">BRAKE PAD</div>
             <div class="card-body">
-                <p>Advanced Semi-Metallic & Sintered Formula.</p>
-                <p style="color: var(--zag-red); font-weight: bold;">OEM Quality</p>
+                <p>Advanced Sintered and Semi-Metallic formulas for premium motorcycles and ATVs.</p>
+                <p style="color: var(--zag-red); font-weight: bold;">Low Noise | High Heat Resistance</p>
             </div>
         </div>
         <div class="card">
-            <div class="card-header">CLUTCH KITS</div>
+            <div class="card-header">BRAKE DISC</div>
             <div class="card-body">
-                <p>Heavy-duty systems for high-torque powersports.</p>
-                <p style="color: var(--zag-red); font-weight: bold;">BRP Specialist</p>
+                <p>High-carbon steel rotors designed for perfect heat dissipation and stable braking.</p>
+                <p style="color: var(--zag-red); font-weight: bold;">Precision Engineered | Durable</p>
             </div>
         </div>
         <div class="card">
-            <div class="card-header">DRIVE BELTS</div>
+            <div class="card-header">BRAKE SHOE</div>
             <div class="card-body">
-                <p>High-tensile "SUPER LINK" belts for CVT systems.</p>
-                <p style="color: var(--zag-red); font-weight: bold;">Global Export</p>
+                <p>Heavy-duty friction materials providing smooth and consistent drum braking performance.</p>
+                <p style="color: var(--zag-red); font-weight: bold;">Eco-Friendly | Long Life</p>
             </div>
         </div>
     </div>
 </section>
 
-<footer>
-    <p>MANUFACTURED BY UCAN INDUSTRIES</p>
-    <a href="mailto:samzh_2000@hotmail.com" class="btn-contact">INQUIRY NOW</a>
-    <div style="margin-top: 20px; font-size: 12px; color: #888; font-family: Arial, sans-serif;">
-        <p>© 2026 ZAG BRAKES. All Rights Reserved.</p>
+<section id="contact" class="contact-section">
+    <div class="section-title" style="color: white; border-color: var(--zag-red); display: inline-block;">GET IN TOUCH</div>
+    <div class="contact-info">
+        <p>WhatsApp: <a href="https://wa.me/8613588158817" target="_blank">+86 13588158817</a></p>
+        <p>Email: <a href="mailto:info@zagbrakes.com">info@zagbrakes.com</a></p>
     </div>
+    <a href="mailto:info@zagbrakes.com" class="btn-contact" style="background: var(--zag-red); color: white; padding: 15px 40px; text-decoration: none; font-size: 18px; display: inline-block; font-family: 'Arial Black';">SEND INQUIRY</a>
+</section>
+
+<footer>
+    <p>© 2026 ZAG BRAKES. All Rights Reserved. Manufactured by UCAN INDUSTRIES.</p>
 </footer>
 
 </body>
