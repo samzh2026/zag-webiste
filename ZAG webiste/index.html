@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZAG BRAKES | Professional Brake Friction & Components Manufacturer</title>
+    <title>ZAG BRAKES | Professional Brake Components Manufacturer</title>
     <style>
         :root {
             --zag-red: #E60012; 
@@ -19,7 +19,6 @@
             scroll-behavior: smooth;
         }
 
-        /* --- Header --- */
         header {
             background-color: var(--zag-black);
             color: white;
@@ -43,11 +42,11 @@
         .logo-text span { color: var(--zag-red); }
         .header-slogan { font-size: 9px; color: #ccc; letter-spacing: 1.5px; font-family: Arial, sans-serif; margin-top: 4px; text-transform: uppercase; }
 
-        nav { display: flex; gap: 25px; font-size: 14px; align-items: center; }
-        nav a { color: white; text-decoration: none; cursor: pointer; transition: 0.3s; }
+        nav { display: flex; gap: 20px; font-size: 13px; align-items: center; }
+        nav a { color: white; text-decoration: none; cursor: pointer; transition: 0.3s; font-family: 'Arial Black'; }
         nav a:hover { color: var(--zag-red); }
         
-        /* Dropdown */
+        /* 下拉菜单通用样式 */
         .dropdown { position: relative; }
         .dropdown-content {
             display: none; position: absolute; background-color: #f9f9f9;
@@ -55,13 +54,18 @@
             top: 25px; z-index: 100;
         }
         .dropdown-content a {
-            color: black; padding: 12px 16px; display: block;
-            font-family: Arial, sans-serif; font-size: 13px;
+            color: black !important; padding: 12px 16px; display: block;
+            font-family: 'Arial Black', sans-serif !important; 
+            font-size: 13px; font-weight: 900; text-transform: uppercase;
+            border-bottom: 1px solid #eee;
         }
-        .dropdown-content a:hover { background-color: #eee; border-left: 4px solid var(--zag-red); }
+        .dropdown-content a:hover { background-color: #eee; border-left: 5px solid var(--zag-red); }
         .dropdown:hover .dropdown-content { display: block; }
 
-        /* --- Hero --- */
+        /* 语言切换器样式 */
+        .lang-btn { background: #333; border: 1px solid #555; color: white; padding: 5px 10px; cursor: pointer; font-size: 12px; }
+
+        /* Hero */
         .hero {
             position: relative; background-color: var(--zag-black); color: white;
             padding: 100px 5% 150px; overflow: hidden;
@@ -75,32 +79,22 @@
         .hero h2 { font-size: 55px; margin: 0; line-height: 1; text-transform: uppercase; }
         .hero p.sub-text { color: var(--zag-red); font-size: 18px; margin-bottom: 10px; letter-spacing: 2px; }
 
-        /* --- About Us --- */
+        .section-title { border-left: 10px solid var(--zag-red); padding-left: 15px; font-size: 32px; font-family: 'Arial Black'; margin-bottom: 30px; text-transform: uppercase; }
+
         .about-section { padding: 80px 5%; background: #fdfdfd; line-height: 1.6; }
         .about-container { max-width: 1000px; margin: 0 auto; font-family: Arial, sans-serif; }
-        .section-title { border-left: 10px solid var(--zag-red); padding-left: 15px; font-size: 32px; font-family: 'Arial Black'; margin-bottom: 30px; text-transform: uppercase; }
-        .about-text { font-size: 17px; color: #444; }
-        .about-text strong { color: var(--zag-black); }
-
-        /* --- Products Grid --- */
         .product-section { padding: 60px 5%; background: white; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .card { border: 1px solid #ddd; transition: 0.3s; position: relative; }
-        .card:hover { transform: translateY(-10px); border-color: var(--zag-red); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .card { border: 1px solid #ddd; transition: 0.3s; }
         .card-header { background-color: var(--zag-black); color: white; padding: 15px; text-align: center; font-size: 20px; text-transform: uppercase; }
         .card-body { padding: 30px; text-align: center; font-family: Arial, sans-serif; }
 
-        /* --- Contact Section --- */
-        .contact-section { padding: 60px 5%; background: var(--zag-black); color: white; text-align: center; }
-        .contact-info { margin: 30px 0; font-family: Arial, sans-serif; font-size: 18px; }
-        .contact-info p { margin: 10px 0; }
-        .contact-info a { color: var(--zag-red); text-decoration: none; font-weight: bold; }
-
-        footer { background: #000; color: #666; padding: 40px 5%; text-align: center; font-family: Arial, sans-serif; font-size: 13px; }
+        footer { background: #000; color: #666; padding: 40px 5%; text-align: center; font-family: Arial, sans-serif; }
 
         @media (max-width: 768px) {
             header { flex-direction: column; gap: 15px; }
-            .hero h2 { font-size: 36px; }
+            .hero h2 { font-size: 34px; }
+            nav { gap: 10px; font-size: 11px; }
         }
     </style>
 </head>
@@ -114,23 +108,34 @@
     
     <nav>
         <div class="dropdown">
-            <a class="dropbtn">PRODUCTS ▾</a>
+            <a class="dropbtn" id="nav-products">PRODUCTS ▾</a>
             <div class="dropdown-content">
-                <a href="#products">BRAKE PAD</a>
-                <a href="#products">BRAKE DISC</a>
-                <a href="#products">BRAKE SHOE</a>
+                <a href="#products" id="drop-pad">BRAKE PAD</a>
+                <a href="#products" id="drop-disc">BRAKE DISC</a>
+                <a href="#products" id="drop-shoe">BRAKE SHOE</a>
             </div>
         </div>
-        <a href="#about">ABOUT US</a>
-        <a href="#contact">CONTACT</a>
+        <a href="#about" id="nav-about">ABOUT US</a>
+        <a href="#contact" id="nav-contact">CONTACT</a>
+        
+        <div class="dropdown">
+            <a class="lang-btn">🌐 <span id="current-lang">English</span> ▾</a>
+            <div class="dropdown-content">
+                <a onclick="changeLang('en')">English</a>
+                <a onclick="changeLang('cn')">中文</a>
+                <a onclick="changeLang('tr')">Türkçe</a>
+                <a onclick="changeLang('es')">Español</a>
+                <a onclick="changeLang('pt')">Português</a>
+            </div>
+        </div>
     </nav>
 </header>
 
 <section class="hero">
     <div class="hero-content">
-        <p class="sub-text">LEADING CHINESE MANUFACTURER</p>
-        <h2>HIGH-PERFORMANCE<br>BRAKING SYSTEMS</h2>
-        <p style="margin-top: 30px; font-size: 18px; max-width: 650px; font-family: Arial, sans-serif; font-weight: normal; opacity: 0.9;">
+        <p class="sub-text" id="hero-sub">LEADING CHINESE MANUFACTURER</p>
+        <h2 id="hero-title">HIGH-PERFORMANCE<br>BRAKING SYSTEMS</h2>
+        <p id="hero-desc" style="margin-top: 30px; font-size: 18px; max-width: 650px; font-family: Arial, sans-serif; font-weight: normal; opacity: 0.9;">
             Professional manufacturer of premium friction materials for ATV, UTV, and Motorcycles. 
             Engineered for noiseless performance and ultimate safety.
         </p>
@@ -139,54 +144,166 @@
 
 <section id="about" class="about-section">
     <div class="about-container">
-        <div class="section-title">Professional Brake Solutions</div>
-        <div class="about-text">
+        <div class="section-title" id="about-title">Professional Brake Solutions</div>
+        <div class="about-text" id="about-content">
             <p><strong>ZAG BRAKES</strong> is a leading specialist in the manufacturing of high-performance braking components for the global powersports market. With a focus on <strong>Professionalism, High-Performance, and Safety</strong>, we provide world-class solutions for all major motorcycle brands.</p>
-            <p>Our products are engineered to provide a <strong>Silent and Comfortable</strong> braking experience without compromising on stopping power. Using advanced semi-metallic and sintered formulas, ZAG components ensure extreme durability and stable friction coefficients under the most demanding conditions.</p>
-            <p>Whether it is on the street or off-road, our mission remains the same: <strong>Safety In Every Stop.</strong></p>
+            <p>Our products are engineered to provide a <strong>Silent and Comfortable</strong> braking experience. Using advanced formulas, ZAG components ensure extreme durability under the most demanding conditions.</p>
         </div>
     </div>
 </section>
 
 <section id="products" class="product-section">
-    <div class="section-title" style="margin-left: 5%;">OUR PRODUCTS</div>
+    <div class="section-title" id="prod-title-main" style="margin-left: 5%;">OUR PRODUCTS</div>
     <div class="grid" style="padding: 0 5%;">
         <div class="card">
-            <div class="card-header">BRAKE PAD</div>
+            <div class="card-header" id="card-pad-h">BRAKE PAD</div>
             <div class="card-body">
-                <p>Advanced Sintered and Semi-Metallic formulas for premium motorcycles and ATVs.</p>
-                <p style="color: var(--zag-red); font-weight: bold;">Low Noise | High Heat Resistance</p>
+                <p id="card-pad-b">Advanced Sintered and Semi-Metallic formulas.</p>
+                <p style="color: var(--zag-red); font-weight: bold;" id="card-pad-f">Low Noise | High Heat Resistance</p>
             </div>
         </div>
         <div class="card">
-            <div class="card-header">BRAKE DISC</div>
+            <div class="card-header" id="card-disc-h">BRAKE DISC</div>
             <div class="card-body">
-                <p>High-carbon steel rotors designed for perfect heat dissipation and stable braking.</p>
-                <p style="color: var(--zag-red); font-weight: bold;">Precision Engineered | Durable</p>
+                <p id="card-disc-b">High-carbon steel rotors designed for heat dissipation.</p>
+                <p style="color: var(--zag-red); font-weight: bold;" id="card-disc-f">Precision Engineered</p>
             </div>
         </div>
         <div class="card">
-            <div class="card-header">BRAKE SHOE</div>
+            <div class="card-header" id="card-shoe-h">BRAKE SHOE</div>
             <div class="card-body">
-                <p>Heavy-duty friction materials providing smooth and consistent drum braking performance.</p>
-                <p style="color: var(--zag-red); font-weight: bold;">Eco-Friendly | Long Life</p>
+                <p id="card-shoe-b">Smooth and consistent drum braking performance.</p>
+                <p style="color: var(--zag-red); font-weight: bold;" id="card-shoe-f">Long Life</p>
             </div>
         </div>
     </div>
 </section>
 
-<section id="contact" class="contact-section">
-    <div class="section-title" style="color: white; border-color: var(--zag-red); display: inline-block;">GET IN TOUCH</div>
-    <div class="contact-info">
-        <p>WhatsApp: <a href="https://wa.me/8613588158817" target="_blank">+86 13588158817</a></p>
-        <p>Email: <a href="mailto:info@zagbrakes.com">info@zagbrakes.com</a></p>
+<section id="contact" style="padding: 60px 5%; background: var(--zag-black); color: white; text-align: center;">
+    <div class="section-title" id="contact-title" style="color: white; border-color: var(--zag-red); display: inline-block;">GET IN TOUCH</div>
+    <div style="margin: 30px 0; font-family: Arial, sans-serif; font-size: 18px;">
+        <p>WhatsApp: <a href="https://wa.me/8613588158817" target="_blank" style="color:var(--zag-red);">+86 13588158817</a></p>
+        <p>Email: <a href="mailto:info@zagbrakes.com" style="color:var(--zag-red);">info@zagbrakes.com</a></p>
     </div>
-    <a href="mailto:info@zagbrakes.com" class="btn-contact" style="background: var(--zag-red); color: white; padding: 15px 40px; text-decoration: none; font-size: 18px; display: inline-block; font-family: 'Arial Black';">SEND INQUIRY</a>
+    <a href="mailto:info@zagbrakes.com" id="btn-inquiry" style="background: var(--zag-red); color: white; padding: 15px 40px; text-decoration: none; font-size: 18px; display: inline-block; font-family: 'Arial Black';">SEND INQUIRY</a>
 </section>
 
 <footer>
     <p>© 2026 ZAG BRAKES. All Rights Reserved. Manufactured by UCAN INDUSTRIES.</p>
 </footer>
+
+<script>
+    const translations = {
+        en: {
+            lang: "English",
+            navProducts: "PRODUCTS ▾",
+            dropPad: "BRAKE PAD", dropDisc: "BRAKE DISC", dropShoe: "BRAKE SHOE",
+            navAbout: "ABOUT US", navContact: "CONTACT",
+            heroSub: "LEADING CHINESE MANUFACTURER",
+            heroTitle: "HIGH-PERFORMANCE<br>BRAKING SYSTEMS",
+            heroDesc: "Professional manufacturer of premium friction materials for ATV, UTV, and Motorcycles. Engineered for noiseless performance and ultimate safety.",
+            aboutTitle: "Professional Brake Solutions",
+            aboutContent: "<p><strong>ZAG BRAKES</strong> is a leading specialist in the manufacturing of high-performance braking components for the global powersports market. With a focus on <strong>Professionalism, High-Performance, and Safety</strong>, we provide world-class solutions for all major motorcycle brands.</p><p>Our products are engineered to provide a <strong>Silent and Comfortable</strong> braking experience. Using advanced formulas, ZAG components ensure extreme durability.</p>",
+            prodTitle: "OUR PRODUCTS",
+            cardPadH: "BRAKE PAD", cardPadB: "Advanced Sintered and Semi-Metallic formulas.", cardPadF: "Low Noise | High Heat Resistance",
+            cardDiscH: "BRAKE DISC", cardDiscB: "High-carbon steel rotors designed for heat dissipation.", cardDiscF: "Precision Engineered",
+            cardShoeH: "BRAKE SHOE", cardShoeB: "Smooth and consistent drum braking performance.", cardShoeF: "Long Life",
+            contactTitle: "GET IN TOUCH", btnInquiry: "SEND INQUIRY"
+        },
+        cn: {
+            lang: "中文",
+            navProducts: "产品中心 ▾",
+            dropPad: "刹车片", dropDisc: "刹车盘", dropShoe: "刹车蹄",
+            navAbout: "关于我们", navContact: "联系我们",
+            heroSub: "中国领先制造商",
+            heroTitle: "高性能制动系统",
+            heroDesc: "专注于ATV、UTV及摩托车高端摩擦材料的专业制造商。为静音性能与极致安全而生。",
+            aboutTitle: "专业的制动解决方案",
+            aboutContent: "<p><strong>ZAG BRAKES</strong> 是全球动力运动市场高性能制动部件制造的领先专家。我们专注于<strong>专业、高性能与安全</strong>，为所有主流摩托车品牌提供世界级解决方案。</p><p>我们的产品旨在提供<strong>静音且舒适</strong>的制动体验。采用先进配方，确保在最严苛条件下的卓越耐用性。</p>",
+            prodTitle: "核心产品",
+            cardPadH: "刹车片", cardPadB: "先进的烧结与半金属配方。", cardPadF: "低噪音 | 高耐热性",
+            cardDiscH: "刹车盘", cardDiscB: "高碳钢盘片，专为散热设计。", cardDiscF: "精密工程 | 经久耐用",
+            cardShoeH: "刹车蹄", cardShoeB: "平滑且稳定的鼓式制动性能。", cardShoeF: "超长寿命",
+            contactTitle: "联系我们", btnInquiry: "立即询价"
+        },
+        tr: {
+            lang: "Türkçe",
+            navProducts: "ÜRÜNLER ▾",
+            dropPad: "FREN BALATASI", dropDisc: "FREN DİSKİ", dropShoe: "FREN PABUCU",
+            navAbout: "HAKKIMIZDA", navContact: "İLETİŞİM",
+            heroSub: "LİDER ÇİNLİ ÜRETİCİ",
+            heroTitle: "YÜKSEK PERFORMANSLI<br>FREN SİSTEMLERİ",
+            heroDesc: "ATV, UTV ve Motosikletler için premium sürtünme malzemeleri profesyonel üreticisi. Sessiz performans ve nihai güvenlik için tasarlandı.",
+            aboutTitle: "Profesyonel Fren Çözümleri",
+            aboutContent: "<p><strong>ZAG BRAKES</strong>, küresel powersports pazarı için yüksek performanslı fren bileşenleri üretiminde lider bir uzmandır. <strong>Profesyonellik, Yüksek Performans ve Güvenlik</strong> odaklı çalışıyoruz.</p>",
+            prodTitle: "ÜRÜNLERİMİZ",
+            cardPadH: "FREN BALATASI", cardPadB: "Gelişmiş Sinterlenmiş ve Yarı Metalik formüller.", cardPadF: "Düşük Gürültü | Yüksek Isı Direnci",
+            cardDiscH: "FREN DİSKİ", cardDiscB: "Isı dağılımı için tasarlanmış yüksek karbonlu çelik rotorlar.", cardDiscF: "Hassas Mühendislik",
+            cardShoeH: "FREN PABUCU", cardShoeB: "Pürüzsüz ve istikrarlı kampana fren performansı.", cardShoeF: "Uzun Ömür",
+            contactTitle: "BİZE ULAŞIN", btnInquiry: "TEKLİF ALIN"
+        },
+        es: {
+            lang: "Español",
+            navProducts: "PRODUCTOS ▾",
+            dropPad: "PASTILLAS DE FRENO", dropDisc: "DISCOS DE FRENO", dropShoe: "ZAPATAS DE FRENO",
+            navAbout: "NOSOTROS", navContact: "CONTACTO",
+            heroSub: "FABRICANTE CHINO LÍDER",
+            heroTitle: "SISTEMAS DE FRENADO<br>DE ALTO RENDIMIENTO",
+            heroDesc: "Fabricante profesional de materiales de fricción premium para ATV, UTV y Motocicletas. Diseñados para un rendimiento silencioso y máxima seguridad.",
+            aboutTitle: "Soluciones Profesionales de Frenos",
+            aboutContent: "<p><strong>ZAG BRAKES</strong> es un especialista líder en la fabricación de componentes de frenado de alto rendimiento para el mercado mundial de deportes de motor.</p>",
+            prodTitle: "NUESTROS PRODUCTOS",
+            cardPadH: "PASTILLAS DE FRENO", cardPadB: "Fórmulas avanzadas sinterizadas y semimetálicas.", cardPadF: "Bajo Ruido | Alta Resistencia al Calor",
+            cardDiscH: "DISCOS DE FRENO", cardDiscB: "Rotores de acero con alto contenido de carbono para disipación de calor.", cardDiscF: "Ingeniería de Precisión",
+            cardShoeH: "ZAPATAS DE FRENO", cardShoeB: "Rendimiento de frenado de tambor suave y constante.", cardShoeF: "Larga Vida Útil",
+            contactTitle: "CONTÁCTENOS", btnInquiry: "ENVIAR CONSULTA"
+        },
+        pt: {
+            lang: "Português",
+            navProducts: "PRODUTOS ▾",
+            dropPad: "PASTILHAS DE TRAVÃO", dropDisc: "DISCOS DE TRAVÃO", dropShoe: "MAXILAS DE TRAVÃO",
+            navAbout: "SOBRE NÓS", navContact: "CONTATO",
+            heroSub: "FABRICANTE CHÊS LÍDER",
+            heroTitle: "SISTEMAS DE TRAVAGEM<br>DE ALTA PERFORMANCE",
+            heroDesc: "Fabricante profissional de materiais de fricção premium para ATV, UTV e Motociclos. Projetados para performance silenciosa e segurança máxima.",
+            aboutTitle: "Soluções Profissionais de Travagem",
+            aboutContent: "<p><strong>ZAG BRAKES</strong> é um especialista líder na fabricação de componentes de travagem de alta performance para o mercado mundial.</p>",
+            prodTitle: "NOSSOS PRODUTOS",
+            cardPadH: "PASTILHA", cardPadB: "Fórmulas avançadas sinterizadas e semimetálicas.", cardPadF: "Baixo Ruído | Alta Resistência ao Calor",
+            cardDiscH: "DISCO", cardDiscB: "Rotores de aço de alto carbono projetados para dissipação de calor.", cardDiscF: "Engenharia de Precisão",
+            cardShoeH: "MAXILA", cardShoeB: "Performance de travagem de tambor suave e constante.", cardShoeF: "Longa Duração",
+            contactTitle: "ENTRE EM CONTATO", btnInquiry: "ENVIAR INQUÉRITO"
+        }
+    };
+
+    function changeLang(lang) {
+        const t = translations[lang];
+        document.getElementById('current-lang').innerText = t.lang;
+        document.getElementById('nav-products').innerText = t.navProducts;
+        document.getElementById('drop-pad').innerText = t.dropPad;
+        document.getElementById('drop-disc').innerText = t.dropDisc;
+        document.getElementById('drop-shoe').innerText = t.dropShoe;
+        document.getElementById('nav-about').innerText = t.navAbout;
+        document.getElementById('nav-contact').innerText = t.navContact;
+        document.getElementById('hero-sub').innerText = t.heroSub;
+        document.getElementById('hero-title').innerHTML = t.heroTitle;
+        document.getElementById('hero-desc').innerText = t.heroDesc;
+        document.getElementById('about-title').innerText = t.aboutTitle;
+        document.getElementById('about-content').innerHTML = t.aboutContent;
+        document.getElementById('prod-title-main').innerText = t.prodTitle;
+        document.getElementById('card-pad-h').innerText = t.cardPadH;
+        document.getElementById('card-pad-b').innerText = t.cardPadB;
+        document.getElementById('card-pad-f').innerText = t.cardPadF;
+        document.getElementById('card-disc-h').innerText = t.cardDiscH;
+        document.getElementById('card-disc-b').innerText = t.cardDiscB;
+        document.getElementById('card-disc-f').innerText = t.cardDiscF;
+        document.getElementById('card-shoe-h').innerText = t.cardShoeH;
+        document.getElementById('card-shoe-b').innerText = t.cardShoeB;
+        document.getElementById('card-shoe-f').innerText = t.cardShoeF;
+        document.getElementById('contact-title').innerText = t.contactTitle;
+        document.getElementById('btn-inquiry').innerText = t.btnInquiry;
+    }
+</script>
 
 </body>
 </html>
