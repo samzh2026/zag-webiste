@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>if (window.location.protocol === "file:") { window.location.href = "http://localhost:3000"; }</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZAG BRAKES | Professional Brake Components Manufacturer</title>
+  <style>
+    :root {
+      --zag-red: #E60012;
+      --zag-black: #1A1A1A;
+      --zag-white: #FFFFFF;
+      --zag-gray: #f5f5f5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Arial Black', Gadget, sans-serif;
+      margin: 0; padding: 0;
+      background-color: var(--zag-white);
+      color: var(--zag-black);
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background-color: var(--zag-black);
+      color: white;
+      padding: 10px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 5px solid var(--zag-red);
+      position: sticky; top: 0; z-index: 1000;
+    }
+
+    .logo-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 2px solid white;
+      padding: 5px 15px;
+    }
+
+    .logo-text { font-size: 28px; font-weight: 900; text-decoration: none; color: white; line-height: 1; }
+    .logo-text span { color: var(--zag-red); }
+    .header-slogan { font-size: 9px; color: #ccc; letter-spacing: 1.5px; font-family: Arial, sans-serif; margin-top: 4px; text-transform: uppercase; }
+
+    nav { display: flex; gap: 20px; font-size: 13px; align-items: center; }
+    nav a { color: white; text-decoration: none; cursor: pointer; transition: 0.3s; font-family: 'Arial Black'; }
+    nav a:hover { color: var(--zag-red); }
+
+    .dropdown { position: relative; }
+    .dropdown-content {
+      display: none; position: absolute; background-color: #f9f9f9;
+      min-width: 180px; box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+      top: 25px; z-index: 100;
+    }
+    .dropdown-content a {
+      color: black !important; padding: 12px 16px; display: block;
+      font-family: 'Arial Black', sans-serif !important;
+      font-size: 13px; font-weight: 900; text-transform: uppercase;
+      border-bottom: 1px solid #eee;
+    }
+    .dropdown-content a:hover { background-color: #eee; border-left: 5px solid var(--zag-red); }
+    .dropdown:hover .dropdown-content { display: block; }
+
+    .lang-btn { background: #333; border: 1px solid #555; color: white; padding: 5px 10px; cursor: pointer; font-size: 12px; }
+
+    /* Hero */
+    .hero {
+      position: relative; background-color: var(--zag-black); color: white;
+      padding: 100px 5% 150px; overflow: hidden;
+    }
+    .hero::after {
+      content: ""; position: absolute; bottom: 0; right: 0; width: 100%; height: 100%;
+      background: var(--zag-red); clip-path: polygon(100% 20%, 100% 100%, 0% 100%);
+      z-index: 1; opacity: 0.9;
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero h2 { font-size: 55px; margin: 0; line-height: 1; text-transform: uppercase; }
+    .hero p.sub-text { color: var(--zag-red); font-size: 18px; margin-bottom: 10px; letter-spacing: 2px; }
+
+    .section-title { border-left: 10px solid var(--zag-red); padding-left: 15px; font-size: 32px; font-family: 'Arial Black'; margin-bottom: 30px; text-transform: uppercase; }
+
+    .about-section { padding: 80px 5%; background: #fdfdfd; line-height: 1.6; }
+    .about-container { max-width: 1000px; margin: 0 auto; font-family: Arial, sans-serif; }
+
+    .product-section { padding: 60px 5%; background: white; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+
+    .card {
+      border: 1px solid #ddd;
+      transition: 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+
+    .card-images {
+      height: 220px;
+      background: #f5f5f5;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-images img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      transition: opacity 0.4s;
+    }
+
+    .card-images img.active { opacity: 1; z-index: 1; }
+    .card-images img.inactive { opacity: 0; z-index: 0; }
+
+    .card-images .no-img {
+      color: #bbb;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .card-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 5;
+    }
+
+    .card-dots .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      border: 1px solid #999;
+      cursor: pointer;
+    }
+    .card-dots .dot.active { background: var(--zag-red); border-color: var(--zag-red); }
+
+    .card-header {
+      background-color: var(--zag-black);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 18px;
+      text-transform: uppercase;
+    }
+
+    .card-body {
+      padding: 20px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      flex: 1;
+    }
+
+    .card-body p { margin: 4px 0; }
+    .card-body .material { color: #666; font-size: 13px; }
+    .card-body .features { color: var(--zag-red); font-weight: bold; font-size: 13px; margin-top: 8px; }
+
+
+    .category-card { cursor: pointer; border: 2px solid #ddd; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
+    .category-card:hover { border-color: var(--zag-red); box-shadow: 0 6px 25px rgba(230,0,18,0.15); transform: translateY(-4px); }
+    .category-card .card-body { display: flex; flex-direction: column; justify-content: center; min-height: 120px; }
+    .category-card .card-body .cat-desc { color: #666; font-size: 14px; margin-top: 8px; }
+    .category-card .card-body .cat-count { color: var(--zag-red); font-weight: bold; font-size: 13px; margin-top: 10px; }
+    .back-btn { display: inline-block; background: var(--zag-black); color: white; padding: 10px 25px; text-decoration: none; font-size: 14px; font-family: 'Arial Black'; cursor: pointer; margin-bottom: 20px; border: none; text-transform: uppercase; transition: background 0.2s; }
+    .back-btn:hover { background: var(--zag-red); }
+
+
+    .category-section { margin-bottom: 40px; }
+    .category-section h3 {
+      font-size: 20px;
+      text-transform: uppercase;
+      font-family: 'Arial Black';
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--zag-red);
+    }
+
+    footer { background: #000; color: #666; padding: 40px 5%; text-align: center; font-family: Arial, sans-serif; }
+
+    .loading { text-align: center; padding: 40px; font-family: Arial, sans-serif; color: #999; }
+    .empty { text-align: center; padding: 40px; font-family: Arial, sans-serif; color: #999; }
+
+    .server-warning {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      padding: 20px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin: 0 5% 20px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @media (max-width: 768px) {
+      header { flex-direction: column; gap: 15px; }
+      .hero h2 { font-size: 34px; }
+      nav { gap: 10px; font-size: 11px; }
+    }
+
+    /* Vehicle Search */
+    .search-section { padding: 30px 5%; background: var(--zag-black); border-bottom: 4px solid var(--zag-red); }
+    .search-box { max-width: 1200px; margin: 0 auto; display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+    .search-box label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-family: Arial, sans-serif; color: #aaa; text-transform: uppercase; letter-spacing: 1px; flex: 1; min-width: 140px; }
+    .search-box input, .search-box select { padding: 12px 14px; border: 1px solid #444; background: #222; color: #fff; font-family: Arial, sans-serif; font-size: 14px; min-height: 46px; }
+    .search-box input:focus, .search-box select:focus { outline: none; border-color: var(--zag-red); }
+    .search-box input::placeholder { color: #666; }
+    .search-btn { padding: 0 28px; min-height: 46px; background: var(--zag-red); color: #fff; border: none; font-family: 'Arial Black', sans-serif; font-size: 13px; text-transform: uppercase; cursor: pointer; letter-spacing: 1px; white-space: nowrap; }
+    .search-btn:hover { background: #c5000f; }
+    .search-results { max-width: 1200px; margin: 20px auto 0; font-family: Arial, sans-serif; }
+    .search-results .count { color: #aaa; font-size: 13px; margin-bottom: 16px; }
+    @media (max-width: 768px) { .search-box { flex-direction: column; } .search-box label { min-width: 100%; } .search-btn { width: 100%; } }
+
+
+    /* Floating WhatsApp Button */
+    .whatsapp-float {
+      position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+      background: #25D366; border-radius: 50%; box-shadow: 0 4px 15px rgba(37,211,102,0.4);
+      z-index: 9999; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
+      animation: pulse-whatsapp 2s infinite;
+    }
+    .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(37,211,102,0.6); }
+    .whatsapp-float svg { width: 34px; height: 34px; fill: #fff; }
+    @keyframes pulse-whatsapp {
+      0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); }
+      70% { box-shadow: 0 0 0 15px rgba(37,211,102,0); }
+      100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+    }
+    @media (max-width: 768px) {
+      .whatsapp-float { bottom: 20px; right: 20px; width: 50px; height: 50px; }
+      .whatsapp-float svg { width: 28px; height: 28px; }
+    }
+
+  
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;justify-content:center;align-items:center;overflow-y:auto}
+.modal-overlay.active{display:flex}
+.modal-content{display:flex;flex-wrap:wrap;background:white;max-width:960px;width:95%;margin:40px auto;position:relative;border:3px solid var(--zag-red);animation:modalIn .3s ease-out}
+@keyframes modalIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.modal-close{position:absolute;top:10px;right:15px;z-index:10;background:var(--zag-red);color:white;border:none;font-size:24px;width:40px;height:40px;cursor:pointer;font-weight:bold;line-height:1}
+.modal-image{flex:1 1 55%;min-width:300px;background:#000;display:flex;align-items:center;justify-content:center;position:relative;min-height:400px}
+.modal-image img{max-width:100%;max-height:500px;object-fit:contain}
+.modal-image .nav-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:white;border:none;font-size:30px;cursor:pointer;padding:10px 15px;z-index:5}
+.modal-image .nav-prev{left:10px}.modal-image .nav-next{right:10px}
+.modal-image .img-counter{position:absolute;bottom:10px;right:15px;color:white;font-size:13px;font-family:Arial,sans-serif;background:rgba(0,0,0,0.6);padding:3px 10px;border-radius:10px}
+.modal-details{flex:1 1 40%;min-width:280px;padding:30px;font-family:Arial,sans-serif;overflow-y:auto;max-height:550px}
+.modal-details h3{font-family:Arial Black;font-size:20px;margin-bottom:5px}
+.modal-details .sku{color:var(--zag-red);font-weight:bold;font-size:14px;margin-bottom:15px}
+.modal-details .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}
+.modal-details .lbl{color:#888;font-weight:bold}.modal-details .val{color:#333}
+.modal-details .md{font-family:Arial;margin-top:15px;line-height:1.6;color:#555}
+.pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:30px;padding:20px}
+.pagination button{padding:8px 16px;border:1px solid #ddd;background:white;cursor:pointer;font-family:Arial;font-size:14px;min-width:40px}
+.pagination button:hover{background:#f0f0f0}
+.pagination button.on{background:var(--zag-red);color:white;border-color:var(--zag-red)}
+.pagination button:disabled{opacity:.4;cursor:not-allowed}
+.pagination .pi{font-family:Arial;font-size:13px;color:#888;margin-left:10px}
+@media(max-width:768px){.modal-content{flex-direction:column}.modal-image{min-height:250px}.modal-image img{max-height:300px}.modal-details{max-height:none}}
+
+</style>
+
+  <!-- SEO Meta -->
+  <meta name="description" id="meta-desc" content="ZAG BRAKES - Professional manufacturer of premium brake pads, discs, and friction materials for motorcycles, ATV, and UTV. Sintered, ceramic, and semi-metallic compounds.">
+  <meta name="keywords" id="meta-keywords" content="motorcycle brake pads, brake discs, ATV brake, UTV brake, sintered brake pads, ceramic brake pads, ZAG BRAKES, powersports brakes, friction materials">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.zagbrakes.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" id="og-title" content="ZAG BRAKES | Professional Brake Components Manufacturer">
+  <meta property="og:description" id="og-desc" content="Professional manufacturer of premium friction materials for ATV, UTV, and Motorcycles.">
+  <meta property="og:image" content="https://www.zagbrakes.com/og-image.jpg">
+  <meta property="og:url" content="https://www.zagbrakes.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ZAG BRAKES">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="zh_CN">
+  <meta property="og:locale:alternate" content="tr_TR">
+  <meta property="og:locale:alternate" content="es_ES">
+  <meta property="og:locale:alternate" content="pt_BR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="tw-title" content="ZAG BRAKES | Professional Brake Components">
+  <meta name="twitter:description" id="tw-desc" content="Professional manufacturer of premium friction materials.">
+  <meta name="twitter:image" content="https://www.zagbrakes.com/og-image.jpg">
+
+  <!-- Hreflang -->
+  <link rel="alternate" hreflang="en" href="https://www.zagbrakes.com/?lang=en">
+  <link rel="alternate" hreflang="zh" href="https://www.zagbrakes.com/?lang=cn">
+  <link rel="alternate" hreflang="tr" href="https://www.zagbrakes.com/?lang=tr">
+  <link rel="alternate" hreflang="es" href="https://www.zagbrakes.com/?lang=es">
+  <link rel="alternate" hreflang="pt" href="https://www.zagbrakes.com/?lang=pt">
+  <link rel="alternate" hreflang="x-default" href="https://www.zagbrakes.com/">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "ZAG BRAKES",
+    "url": "https://www.zagbrakes.com",
+    "description": "Professional manufacturer of premium brake components for motorcycles, ATV, and UTV.",
+    "foundingLocation": "China",
+    "contactPoint": { "@type": "ContactPoint", "contactType": "sales", "telephone": "+86-576-88061286" },
+    "sameAs": []
+  }
+  </script>
+
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <a href="/" class="logo-text">ZAG <span>BRAKES</span></a>
+    <div class="header-slogan">SAFETY IN EVERY STOP</div>
+  </div>
+
+  <nav>
+    <div class="dropdown">
+      <a class="dropbtn" id="nav-products">PRODUCTS &#9660;</a>
+      <div class="dropdown-content" id="nav-dropdown">
+        <!-- populated by JS -->
+      </div>
+    </div>
+    <a href="#about" id="nav-about">ABOUT US</a>
+    <a href="#contact" id="nav-contact">CONTACT</a>
+
+    <div class="dropdown">
+      <a class="lang-btn">&#127760; <span id="current-lang">English</span> &#9660;</a>
+      <div class="dropdown-content">
+        <a onclick="changeLang('en')">English</a>
+        <a onclick="changeLang('cn')">&#20013;&#25991;</a>
+        <a onclick="changeLang('tr')">T&#252;rk&#231;e</a>
+        <a onclick="changeLang('es')">Espa&#241;ol</a>
+        <a onclick="changeLang('pt')">Portugu&#234;s</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <p class="sub-text" id="hero-sub">LEADING CHINESE MANUFACTURER</p>
+    <h2 id="hero-title">HIGH-PERFORMANCE<br>BRAKING SYSTEMS</h2>
+    <p id="hero-desc" style="margin-top: 30px; font-size: 18px; max-width: 650px; font-family: Arial, sans-serif; font-weight: normal; opacity: 0.9;">
+      Professional manufacturer of premium friction materials for ATV, UTV, and Motorcycles.
+      Engineered for noiseless performance and ultimate safety.
+    </p>
+  </div>
+</section>
+
+<!-- Vehicle Search -->
+<section class="search-section">
+  <div class="search-box">
+    <label>SEARCH BY EBC NO.
+      <input type="text" id="searchPartInput" placeholder="e.g. FA123 or ZAG-PAD-F001">
+    </label>
+    <label>Make
+      <select id="searchMakeSelect"><option value="">All Makes</option></select>
+    </label>
+    <label>Model
+      <select id="searchModelSelect"><option value="">Select Make first</option></select>
+    </label>
+    <label>Year
+      <select id="searchYearSelect"><option value="">Select Model first</option></select>
+    </label>
+    <button class="search-btn" id="searchBtn">Search</button>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+</section>
+
+<section id="about" class="about-section">
+  <div class="about-container">
+    <div class="section-title" id="about-title">Professional Brake Solutions</div>
+    <div class="about-text" id="about-content">
+      <p><strong>ZAG BRAKES</strong> is a leading specialist in the manufacturing of high-performance braking components for the global powersports market. With a focus on <strong>Professionalism, High-Performance, and Safety</strong>, we provide world-class solutions for all major motorcycle brands.</p>
+      <p>Our products are engineered to provide a <strong>Silent and Comfortable</strong> braking experience. Using advanced formulas, ZAG components ensure extreme durability.</p>
+    </div>
+  </div>
+</section>
+
+<section id="products" class="product-section">
+  <div class="section-title" id="prod-title-main" style="margin-left: 0;">OUR PRODUCTS</div>
+  <div id="products-container">
+    <div class="loading">Loading products...</div>
+  </div>
+</section>
+
+<section id="contact" style="padding: 60px 5%; background: var(--zag-black); color: white; text-align: center;">
+  <div class="section-title" id="contact-title" style="color: white; border-color: var(--zag-red); display: inline-block;">GET IN TOUCH</div>
+  <div style="margin: 30px 0; font-family: Arial, sans-serif; font-size: 18px;">
+    <p>WhatsApp: <a href="https://wa.me/8613588158817" target="_blank" style="color:var(--zag-red);">+86 13588158817</a></p>
+    <p>Email: <a href="mailto:info@ucanindustry.com" style="color:var(--zag-red);">info@ucanindustry.com</a></p>
+  </div>
+  <a href="mailto:info@ucanindustry.com" id="btn-inquiry" style="background: var(--zag-red); color: white; padding: 15px 40px; text-decoration: none; font-size: 18px; display: inline-block; font-family: 'Arial Black';">SEND INQUIRY</a>
+</section>
+
+<footer>
+  <p>&copy; 2026 ZAG BRAKES. All Rights Reserved. Manufactured by UCAN INDUSTRIES.</p>
+</footer>
+
+<script>
+  // --- Multi-language translations ---
+  var translations = {
+    en: {
+      lang: "English",
+      navProducts: "PRODUCTS &#9660;",
+      navAbout: "ABOUT US", navContact: "CONTACT",
+      heroSub: "LEADING CHINESE MANUFACTURER",
+      heroTitle: "HIGH-PERFORMANCE<br>BRAKING SYSTEMS",
+      heroDesc: "Professional manufacturer of premium friction materials for ATV, UTV, and Motorcycles. Engineered for noiseless performance and ultimate safety.",
+      aboutTitle: "Professional Brake Solutions",
+      aboutContent: "<p><strong>ZAG BRAKES</strong> is a leading specialist in the manufacturing of high-performance braking components for the global powersports market.</p>",
+      prodTitle: "OUR PRODUCTS",
+      contactTitle: "GET IN TOUCH", btnInquiry: "SEND INQUIRY",
+      loading: "Loading products...",
+      noProducts: "No products yet. Add products via the admin panel.",
+      serverError: "Products cannot load because you opened this page directly as a file."
+    },
+    cn: {
+      lang: "&#20013;&#25991;",
+      navProducts: "&#20135;&#21697;&#20013;&#24515; &#9660;",
+      navAbout: "&#20851;&#20110;&#25105;&#20204;", navContact: "&#32852;&#31995;&#25105;&#20204;",
+      heroSub: "&#20013;&#22269;&#39046;&#20808;&#21046;&#36896;&#21830;",
+      heroTitle: "&#39640;&#24615;&#33021;&#21046;&#21160;&#31995;&#32479;",
+      heroDesc: "&#19987;&#27880;&#20110;ATV&#12289;UTV&#21450;&#25705;&#25176;&#36710;&#39640;&#31471;&#25705;&#25830;&#26448;&#26009;&#30340;&#19987;&#19994;&#21046;&#36896;&#21830;&#12290;",
+      aboutTitle: "&#19987;&#19994;&#30340;&#21046;&#21160;&#35299;&#20915;&#26041;&#26696;",
+      aboutContent: "<p><strong>ZAG BRAKES</strong> &#26159;&#20840;&#29699;&#21160;&#21147;&#36816;&#21160;&#24066;&#22330;&#39640;&#24615;&#33021;&#21046;&#21160;&#37096;&#20214;&#21046;&#36896;&#30340;&#39046;&#20808;&#19987;&#23478;&#12290;</p>",
+      prodTitle: "&#26680;&#24515;&#20135;&#21697;",
+      contactTitle: "&#32852;&#31995;&#25105;&#20204;", btnInquiry: "&#31435;&#21363;&#35810;&#20215;",
+      loading: "&#27491;&#22312;&#21152;&#36733;&#20135;&#21697;...",
+      noProducts: "&#26242;&#26080;&#20135;&#21697;&#65292;&#35831;&#36890;&#36807;&#21518;&#21488;&#28155;&#21152;&#12290;",
+      serverError: "&#20135;&#21697;&#21152;&#36733;&#22833;&#36133;&#65292;&#35831;&#36890;&#36807; http://localhost:3000 &#35775;&#38382;&#12290;"
+    },
+    tr: {
+      lang: "T&#252;rk&#231;e",
+      navProducts: "&#220;R&#220;NLER &#9660;",
+      navAbout: "HAKKIMIZDA", navContact: "&#304;LET&#304;&#350;&#304;M",
+      heroSub: "L&#304;DER &#199;&#304;NL&#304; &#220;RET&#304;C&#304;",
+      heroTitle: "Y&#220;KSEK PERFORMANSLI<br>FREN S&#304;STEMLER&#304;",
+      heroDesc: "ATV, UTV ve Motosikletler i&#231;in premium s&#252;rt&#252;nme malzemeleri profesyonel &#252;reticisi.",
+      aboutTitle: "Profesyonel Fren &#199;&#246;z&#252;mleri",
+      aboutContent: "<p><strong>ZAG BRAKES</strong> k&#252;resel powersports pazar&#305; i&#231;in lider bir uzmand&#305;r.</p>",
+      prodTitle: "&#220;R&#220;NLER&#304;M&#304;Z",
+      contactTitle: "B&#304;ZE ULA&#350;IN", btnInquiry: "TEKL&#304;F ALIN",
+      loading: "&#220;r&#252;nler y&#252;kleniyor...",
+      noProducts: "Hen&#252;z &#252;r&#252;n yok.",
+      serverError: "&#220;r&#252;nler y&#252;klenemedi. L&#252;tfen http://localhost:3000 adresinden eri&#351;in."
+    },
+    es: {
+      lang: "Espa&#241;ol",
+      navProducts: "PRODUCTOS &#9660;",
+      navAbout: "NOSOTROS", navContact: "CONTACTO",
+      heroSub: "FABRICANTE CHINO L&#205;DER",
+      heroTitle: "SISTEMAS DE FRENADO<br>DE ALTO RENDIMIENTO",
+      heroDesc: "Fabricante profesional de materiales de fricci&#243;n premium para ATV, UTV y Motocicletas.",
+      aboutTitle: "Soluciones Profesionales de Frenos",
+      aboutContent: "<p><strong>ZAG BRAKES</strong> es un especialista l&#237;der en componentes de frenado.</p>",
+      prodTitle: "NUESTROS PRODUCTOS",
+      contactTitle: "CONT&#193;CTENOS", btnInquiry: "ENVIAR CONSULTA",
+      loading: "Cargando productos...",
+      noProducts: "No hay productos.",
+      serverError: "No se pudieron cargar los productos. Acceda desde http://localhost:3000."
+    },
+    pt: {
+      lang: "Portugu&#234;s",
+      navProducts: "PRODUTOS &#9660;",
+      navAbout: "SOBRE N&#211;S", navContact: "CONTATO",
+      heroSub: "FABRICANTE CHIN&#202;S L&#205;DER",
+      heroTitle: "SISTEMAS DE TRAVAGEM<br>DE ALTA PERFORMANCE",
+      heroDesc: "Fabricante profissional de materiais de fric&#231;&#227;o premium para ATV, UTV e Motociclos.",
+      aboutTitle: "Solu&#231;&#245;es Profissionais de Travagem",
+      aboutContent: "<p><strong>ZAG BRAKES</strong> &#233; um especialista l&#237;der em componentes de travagem.</p>",
+      prodTitle: "NOSSOS PRODUTOS",
+      contactTitle: "ENTRE EM CONTATO", btnInquiry: "ENVIAR INQU&#201;RITO",
+      loading: "Carregando produtos...",
+      noProducts: "Nenhum produto.",
+      serverError: "Produtos n&#227;o puderam ser carregados. Acesse via http://localhost:3000."
+    }
+  };
+
+  var currentLang = "en";
+
+  // SEO meta translations
+  var seoMeta = {
+    en: { desc: "ZAG BRAKES - Professional manufacturer of premium brake pads, discs, and friction materials for motorcycles, ATV, UTV. Sintered, ceramic, and semi-metallic compounds.", keywords: "motorcycle brake pads, brake discs, ATV brake, UTV brake, sintered brake pads, ceramic brake pads, ZAG BRAKES, powersports brakes", title: "ZAG BRAKES | Professional Brake Components Manufacturer" },
+    cn: { desc: "ZAG BRAKES - 专业制造摩托车、ATV、UTV高端刹车片、刹车盘及摩擦材料。烧结、陶瓷、半金属配方。", keywords: "摩托车刹车片, 刹车盘, ATV刹车, UTV刹车, 烧结刹车片, 陶瓷刹车片, ZAG BRAKES, 摩擦材料", title: "ZAG BRAKES | 专业制动系统制造商" },
+    tr: { desc: "ZAG BRAKES - Motosiklet, ATV ve UTV icin profesyonel fren balatasi, disk ve surtunme malzemeleri ureticisi.", keywords: "motosiklet fren balatasi, fren diskleri, ATV fren, UTV fren, sinter fren balatasi, seramik fren balatasi, ZAG BRAKES", title: "ZAG BRAKES | Profesyonel Fren Komponentleri Ureticisi" },
+    es: { desc: "ZAG BRAKES - Fabricante profesional de pastillas de freno, discos y materiales de friccion para motocicletas, ATV y UTV.", keywords: "pastillas de freno moto, discos de freno, frenos ATV, frenos UTV, pastillas sinterizadas, pastillas ceramicas, ZAG BRAKES", title: "ZAG BRAKES | Fabricante Profesional de Componentes de Frenos" },
+    pt: { desc: "ZAG BRAKES - Fabricante profissional de pastilhas de freio, discos e materiais de friccao para motocicletas, ATV e UTV.", keywords: "pastilhas de freio moto, discos de freio, freios ATV, freios UTV, pastilhas sinterizadas, pastilhas ceramicas, ZAG BRAKES", title: "ZAG BRAKES | Fabricante Profissional de Componentes de Freio" }
+  };
+
+  function updateSeoTags(lang) {
+    var m = seoMeta[lang] || seoMeta.en;
+    document.title = m.title;
+    var descEl = document.getElementById("meta-desc");
+    var kwEl = document.getElementById("meta-keywords");
+    var ogtEl = document.getElementById("og-title");
+    var ogdEl = document.getElementById("og-desc");
+    var twtEl = document.getElementById("tw-title");
+    var twdEl = document.getElementById("tw-desc");
+    if (descEl) descEl.setAttribute("content", m.desc);
+    if (kwEl) kwEl.setAttribute("content", m.keywords);
+    if (ogtEl) ogtEl.setAttribute("content", m.title);
+    if (ogdEl) ogdEl.setAttribute("content", m.desc);
+    if (twtEl) twtEl.setAttribute("content", m.title);
+    if (twdEl) twdEl.setAttribute("content", m.desc);
+    document.documentElement.lang = lang === "cn" ? "zh" : (lang === "pt" ? "pt-BR" : lang);
+  }
+
+
+  function changeLang(lang) {
+    currentLang = lang;
+    var t = translations[lang];
+    document.getElementById("current-lang").innerHTML = t.lang;
+    document.getElementById("nav-products").innerHTML = t.navProducts;
+    document.getElementById("nav-about").innerHTML = t.navAbout;
+    document.getElementById("nav-contact").innerHTML = t.navContact;
+    document.getElementById("hero-sub").innerHTML = t.heroSub;
+    document.getElementById("hero-title").innerHTML = t.heroTitle;
+    document.getElementById("hero-desc").innerHTML = t.heroDesc;
+    document.getElementById("about-title").innerHTML = t.aboutTitle;
+    document.getElementById("about-content").innerHTML = t.aboutContent;
+    document.getElementById("prod-title-main").innerHTML = t.prodTitle;
+    document.getElementById("contact-title").innerHTML = t.contactTitle;
+    document.getElementById("btn-inquiry").innerHTML = t.btnInquiry;
+    updateSeoTags(lang);
+    updateSeoTags(currentLang);
+  var mdlImgs=[],mdlIdx=0;
+function cardClick(el){var pid=el.getAttribute("data-pid");if(pid)openModal(pid)}
+function openModal(pid){
+ var o=document.getElementById("productModal");o.classList.add("active");
+ document.getElementById("modalMainImg").src="";
+ document.getElementById("modalDetails").innerHTML='<div class="loading">Loading...</div>';
+ document.getElementById("modalPrev").style.display="none";
+ document.getElementById("modalNext").style.display="none";
+ document.body.style.overflow="hidden";
+ fetch("/api/products/"+pid).then(function(r){return r.json()}).then(function(p){
+  mdlImgs=p.images||[];mdlIdx=0;updMdlImg();
+  if(mdlImgs.length>1){document.getElementById("modalPrev").style.display="block";document.getElementById("modalNext").style.display="block"}
+  var h="<h3>"+esc(p.name)+"</h3>";
+  if(p.sku)h+='<div class="sku">'+esc(p.sku)+'</div>';
+  if(p.brand)h+='<div class="row"><span class="lbl">Brand</span><span class="val">'+esc(p.brand)+'</span></div>';
+  if(p.material)h+='<div class="row"><span class="lbl">Material</span><span class="val">'+esc(p.material)+'</span></div>';
+  if(p.specifications)h+='<div class="md">'+esc(p.specifications)+'</div>';
+  if(p.description)h+='<div class="md">'+esc(p.description)+'</div>';
+  if(p.crossRefs&&p.crossRefs.length){h+='<div class="md"><b>Cross References:</b><br>';p.crossRefs.forEach(function(cr){h+=esc(cr.ref_type)+': '+esc(cr.ref_number)+(cr.brand?' ('+esc(cr.brand)+')':'')+'<br>'});h+='</div>'};if(p.vehicles&&p.vehicles.length){h+='<div class="md"><b>Vehicle Fitment:</b><br>';p.vehicles.forEach(function(v){h+=esc(v.make)+' '+esc(v.model)+' ('+esc(v.year)+') '+esc(v.engine)+' '+esc(v.position)+'<br>'});h+='</div>'}
+  if(p.crossRefs&&p.crossRefs.length){h+='<div class="md"><b>Cross References:</b><br>';p.crossRefs.forEach(function(cr){h+=esc(cr.ref_type)+': '+esc(cr.ref_number)+(cr.brand?' ('+esc(cr.brand)+')':'')+'<br>'});h+='</div>'}
+  document.getElementById("modalDetails").innerHTML=h
+ }).catch(function(){document.getElementById("modalDetails").innerHTML='<div class="empty">Load failed</div>'})
+}
+function closeModal(){document.getElementById("productModal").classList.remove("active");document.body.style.overflow="";mdlImgs=[];mdlIdx=0}
+function updMdlImg(){if(!mdlImgs.length){document.getElementById("modalMainImg").src="";return}document.getElementById("modalMainImg").src=mdlImgs[mdlIdx];document.getElementById("modalCounter").textContent=(mdlIdx+1)+"/"+mdlImgs.length}
+function modalNext(){if(mdlImgs.length<=1)return;mdlIdx=(mdlIdx+1)%mdlImgs.length;updMdlImg()}
+function modalPrev(){if(mdlImgs.length<=1)return;mdlIdx=(mdlIdx-1+mdlImgs.length)%mdlImgs.length;updMdlImg()}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeModal();if(e.key==="ArrowRight")modalNext();if(e.key==="ArrowLeft")modalPrev()});
+function esc(v){return String(v||"").replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+var catId=null,catPage=1,catLimit=12;
+function showCatPage(cid,pg){
+ pg=pg||1;catId=cid;catPage=pg;
+ var c=document.getElementById("products-container");
+ c.innerHTML='<div class="loading">Loading...</div>';
+ fetch("/api/catalog?category="+cid+"&page="+pg+"&limit="+catLimit).then(function(r){return r.json()}).then(function(d){
+  var cn=d.categories.find(function(x){return x.id===cid});var nm=cn?cn.name:"Products";
+  if(!d.products.length){c.innerHTML='<button class="back-btn" onclick="showAllCategories()">Back</button><div class="empty">No products</div>';document.getElementById("pg-container").innerHTML="";return}
+  var h='<button class="back-btn" onclick="showAllCategories()">Back</button><h3>'+esc(nm)+'</h3><div class="grid">';
+  d.products.forEach(function(p){h+=renderProductCardPC(p,nm)});h+='</div>';c.innerHTML=h;bindCardDots();
+  renderPg(d.pagination,cid);c.scrollIntoView({behavior:"smooth"})
+ }).catch(function(e){c.innerHTML='<div class="empty">Error: '+esc(e.message)+'</div>'})
+}
+function renderPg(pg,cid){
+ var c=document.getElementById("pg-container");if(!pg||pg.totalPages<=1){c.innerHTML="";return}
+ var h='<div class="pagination">';h+='<button '+(pg.page<=1?"disabled":"")+' onclick="showCatPage(catId,'+(pg.page-1)+')">Prev</button>';
+ var s=Math.max(1,pg.page-2),e=Math.min(pg.totalPages,pg.page+2);
+ if(s>1){h+='<button onclick="showCatPage(catId,1)">1</button>';if(s>2)h+='<span class="pi">...</span>'}
+ for(var i=s;i<=e;i++)h+='<button class="'+(i===pg.page?"on":"")+'" onclick="showCatPage(catId,'+i+')">'+i+'</button>';
+ if(e<pg.totalPages){if(e<pg.totalPages-1)h+='<span class="pi">...</span>';h+='<button onclick="showCatPage(catId,'+pg.totalPages+')">'+pg.totalPages+'</button>'}
+ h+='<button '+(pg.page>=pg.totalPages?"disabled":"")+' onclick="showCatPage(catId,'+(pg.page+1)+')">Next</button>';
+ h+='<span class="pi">'+pg.total+' products</span></div>';c.innerHTML=h
+}
+function renderProductCardPC(pr,cn){
+ var imgs=pr.images||[],ih="",dh="";
+ if(imgs.length){ih=imgs.map(function(s,i){return'<img class="'+(i===0?"active":"inactive")+'" src="'+esc(s)+'" alt="'+esc(pr.name)+'" loading="lazy">'}).join("")}
+ else ih='<div class="no-img">No image</div>';
+ if(imgs.length>1){dh='<div class="card-dots">'+imgs.map(function(_,i){return'<span class="dot '+(i===0?"active":"")+'" data-dot="'+i+'"></span>'}).join("")+'</div>'}
+ return'<div class="card" data-pid="'+esc(pr.id)+'" onclick="cardClick(this)"><div class="card-images">'+ih+dh+'</div><div class="card-header">'+esc(cn||pr.name)+'</div><div class="card-body"><p><strong>'+esc(pr.name)+'</strong></p>'+(pr.sku?'<p class="material">SKU: '+esc(pr.sku)+'</p>':'')+(pr.material?'<p class="material">'+esc(pr.material)+'</p>':'')+'</div></div>'
+}
+var pc=document.createElement("div");pc.id="pg-container";document.getElementById("products").appendChild(pc);
+
+
+  loadProducts();
+  }
+
+  function escapeHtml(value) {
+    return String(value || "").replace(/[&<>"']/g, function (char) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char];
+    });
+  }
+
+  function renderProductCard(product, categoryName) {
+    var images = product.images || (product.image ? [product.image] : []);
+    var features = product.features || [];
+    var imageHtml = "";
+    var dotsHtml = "";
+
+    if (images.length > 0) {
+      imageHtml = images.map(function (src, i) {
+        var cls = i === 0 ? "active" : "inactive";
+        return "<img class=\"" + cls + "\" data-img=\"" + i + "\" src=\"" + escapeHtml(src) + "\" alt=\"" + escapeHtml(product.name) + "\" loading=\"lazy\">";
+      }).join("");
+
+      if (images.length > 1) {
+        dotsHtml = "<div class=\"card-dots\">" +
+          images.map(function (_, i) {
+            var cls = i === 0 ? "active" : "";
+            return "<span class=\"dot " + cls + "\" data-dot=\"" + i + "\"></span>";
+          }).join("") +
+          "</div>";
+      }
+    } else {
+      imageHtml = "<div class=\"no-img\">No image</div>";
+    }
+
+    var featuresHtml = features.length
+      ? "<p class=\"features\">" + escapeHtml(features.join(" | ")) + "</p>"
+      : "";
+
+    return "<div class=\"card\" data-pid=\"" + escapeHtml(product.id || "") + "\" onclick=\"cardClick(this)\">" +
+      "<div class=\"card-images\">" + imageHtml + dotsHtml + "</div>" +
+      "<div class=\"card-header\">" + escapeHtml(categoryName || product.name) + "</div>" +
+      "<div class=\"card-body\">" +
+        "<p><strong>" + escapeHtml(product.name) + "</strong></p>" +
+        (product.sku ? "<p class=\"material\">SKU: " + escapeHtml(product.sku) + "</p>" : "") +
+        (product.material ? "<p class=\"material\">" + escapeHtml(product.material) + "</p>" : "") +
+        (product.vehicleModels ? "<p class=\"material\">" + escapeHtml(product.vehicleModels) + "</p>" : "") +
+        (product.description ? "<p>" + escapeHtml(product.description) + "</p>" : "") +
+        featuresHtml +
+      "</div>" +
+    "</div>";
+  }
+
+  function renderCategoryCards(categories) {
+    if (!categories || categories.length === 0) {
+      return "<div class=\"empty\">" + (translations[currentLang].noProducts || "No categories yet.") + "</div>";
+    }
+    var descs = {
+      "Brake Pads": "Advanced Sintered and Semi-Metallic formulas.",
+      "Brake Discs": "High-carbon steel rotors designed for heat dissipation.",
+      "Brake Shoes": "Smooth and consistent drum braking performance.",
+      "Clutch Plates": "High-performance clutch components for powersports."
+    };
+    var features = {
+      "Brake Pads": "Low Noise | High Heat Resistance",
+      "Brake Discs": "Precision Engineered",
+      "Brake Shoes": "Long Life",
+      "Clutch Plates": "Heavy Duty | Smooth Engagement"
+    };
+    var html = "<div class=\"grid\">";
+    categories.forEach(function (cat) {
+      var desc = descs[cat.name] || "Click to explore our " + cat.name.toLowerCase() + " products.";
+      var feat = features[cat.name] || "";
+      html += "<div class=\"card category-card\" onclick=\"showCategoryProducts('" + escapeHtml(cat.id) + "')\">";
+      html += "<div class=\"card-header\">" + escapeHtml(cat.name) + "</div>";
+      html += "<div class=\"card-body\">";
+      html += "<p class=\"cat-desc\">" + escapeHtml(desc) + "</p>";
+      if (feat) html += "<p class=\"cat-count\">" + escapeHtml(feat) + "</p>";
+      html += "</div></div>";
+    });
+    html += "</div>";
+    return html;
+  }
+
+  function showCategoryProducts(categoryId) { showCatPage(categoryId, 1); return; 
+    if (!catalogData) return;
+    var cat = catalogData.categories.find(function (c) { return c.id === categoryId; });
+    var catName = cat ? cat.name : "Products";
+    var products = catalogData.products.filter(function (p) { return (p.categoryId || p.category_id) === categoryId; });
+    var container = document.getElementById("products-container");
+    if (products.length === 0) {
+      container.innerHTML = "<button class=\"back-btn\" onclick=\"showAllCategories()\">&larr; " + (translations[currentLang].back || "Back") + "</button>" +
+        "<div class=\"empty\">" + (translations[currentLang].noProducts || "No products in this category.") + "</div>";
+      return;
+    }
+    var html = "<button class=\"back-btn\" onclick=\"showAllCategories()\">&larr; " + (translations[currentLang].back || "Back") + "</button>";
+    html += "<div class=\"category-section\">";
+    html += "<h3 id=\"cat-" + escapeHtml(cat ? cat.slug || cat.id : categoryId) + "\">" + escapeHtml(catName) + "</h3>";
+    html += "<div class=\"grid\">";
+    html += products.map(function (p) { return renderProductCard(p, catName); }).join("");
+    html += "</div></div>";
+    container.innerHTML = html;
+    bindCardDots();
+    container.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function showAllCategories() {
+    if (!catalogData) return;
+    var container = document.getElementById("products-container");
+    container.innerHTML = renderCategoryCards(catalogData.categories);
+    container.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function bindCardDots() {
+    document.querySelectorAll(".card-dots .dot").forEach(function (dot) {
+      dot.addEventListener("click", function () {
+        var cardImages = dot.closest(".card-images");
+        var idx = dot.dataset.dot;
+        var imgs = cardImages.querySelectorAll("img");
+        var dots = cardImages.querySelectorAll(".dot");
+        imgs.forEach(function (img) {
+          img.className = img.dataset.img === idx ? "active" : "inactive";
+        });
+        dots.forEach(function (d) {
+          d.className = d.dataset.dot === idx ? "dot active" : "dot";
+        });
+      });
+    });
+  }
+
+  function populateNavDropdown(categories) {
+    var dropdown = document.getElementById("nav-dropdown");
+    dropdown.innerHTML = categories.map(function (c) {
+      return "<a href=\"#cat-" + escapeHtml(c.slug || c.id) + "\">" + escapeHtml(c.name) + "</a>";
+    }).join("");
+  }
+
+  // ===== Vehicle Search ===== 
+  async function loadSearchMakes() {
+    try {
+      var resp = await fetch("/api/vehicles/makes");
+      var makes = await resp.json();
+      var sel = document.getElementById("searchMakeSelect");
+      makes.forEach(function (m) {
+        sel.innerHTML += '<option value="' + escapeHtml(m.id) + '">' + escapeHtml(m.name) + '</option>';
+      });
+    } catch (_) {}
+  }
+
+  document.getElementById("searchMakeSelect").addEventListener("change", async function () {
+    var makeId = this.value;
+    var modelSel = document.getElementById("searchModelSelect");
+    var yearSel = document.getElementById("searchYearSelect");
+    modelSel.innerHTML = '<option value="">All Models</option>';
+    yearSel.innerHTML = '<option value="">All Years</option>';
+    if (!makeId) return;
+    try {
+      var resp = await fetch("/api/vehicles/models?makeId=" + makeId);
+      var models = await resp.json();
+      models.forEach(function (m) {
+        modelSel.innerHTML += '<option value="' + escapeHtml(m.id) + '">' + escapeHtml(m.name) + '</option>';
+      });
+    } catch (_) {}
+  });
+
+  document.getElementById("searchModelSelect").addEventListener("change", async function () {
+    var modelId = this.value;
+    var yearSel = document.getElementById("searchYearSelect");
+    yearSel.innerHTML = '<option value="">All Years</option>';
+    if (!modelId) return;
+    try {
+      var resp = await fetch("/api/vehicles/years?modelId=" + modelId);
+      var years = await resp.json();
+      years.forEach(function (y) {
+        yearSel.innerHTML += '<option value="' + escapeHtml(y.id) + '">' + y.year + '</option>';
+      });
+    } catch (_) {}
+  });
+
+  document.getElementById("searchBtn").addEventListener("click", async function () {
+    var partInput = document.getElementById("searchPartInput").value.trim();
+    var makeId = document.getElementById("searchMakeSelect").value;
+    var modelId = document.getElementById("searchModelSelect").value;
+    var yearId = document.getElementById("searchYearSelect").value;
+    var resultsDiv = document.getElementById("searchResults");
+
+    // Priority: part number/EBC search
+    if (partInput) {
+      resultsDiv.innerHTML = '<div class="loading">Searching...</div>';
+      try {
+        var resp = await fetch("/api/search?q=" + encodeURIComponent(partInput));
+        var results = await resp.json();
+        if (results.length === 0) {
+          resultsDiv.innerHTML = '<div class="empty">No products found for "' + escapeHtml(partInput) + '"</div>';
+          return;
+        }
+        resultsDiv.innerHTML = '<div class="count">' + results.length + ' result(s) for "' + escapeHtml(partInput) + '"</div>' +
+          '<div class="grid">' + results.map(function (r) { return renderProductCard(r.product, r.matchType); }).join("") + '</div>';
+        bindCardDots();
+      } catch (err) { resultsDiv.innerHTML = '<div class="empty">Search error: ' + escapeHtml(err.message) + '</div>'; }
+      return;
+    }
+
+    // Vehicle search
+    if (!makeId && !modelId && !yearId) {
+      resultsDiv.innerHTML = '<div class="empty">Enter a part number or select a vehicle to search</div>';
+      return;
+    }
+
+    resultsDiv.innerHTML = '<div class="loading">Searching...</div>';
+    try {
+      var params = [];
+      if (makeId) params.push("makeId=" + makeId);
+      if (modelId) params.push("modelId=" + modelId);
+      if (yearId) params.push("yearId=" + yearId);
+      var vResp = await fetch("/api/vehicles/search?" + params.join("&"));
+      var products = await vResp.json();
+      if (products.length === 0) {
+        resultsDiv.innerHTML = '<div class="empty">No products found for this vehicle</div>';
+        return;
+      }
+      resultsDiv.innerHTML = '<div class="count">' + products.length + ' compatible product(s)</div>' +
+        '<div class="grid">' + products.map(function (p) { return renderProductCard(p, "Compatible"); }).join("") + '</div>';
+      bindCardDots();
+    } catch (err) { resultsDiv.innerHTML = '<div class="empty">Search error: ' + escapeHtml(err.message) + '</div>'; }
+  });
+
+  // Load makes on page load
+  loadSearchMakes();
+
+  var catalogData = null;
+
+  async function loadProducts() {
+    var container = document.getElementById("products-container");
+    container.innerHTML = "<div class=\"loading\">" + (translations[currentLang].loading || "Loading...") + "</div>";
+
+    try {
+      var resp = await fetch("/api/catalog?status=published");
+      if (!resp.ok) throw new Error("Server returned " + resp.status);
+      var data = await resp.json();
+      populateNavDropdown(data.categories || []);
+      if (!data.products || data.products.length === 0) {
+        container.innerHTML = "<div class=\"empty\">" + (translations[currentLang].noProducts || "No products yet.") + "</div>";
+        return;
+      }
+      catalogData = data;
+      container.innerHTML = renderCategoryCards(data.categories);
+      bindCardDots();
+    } catch (err) {
+      if (window.location.protocol === "file:") {
+        container.innerHTML = "<div class=\"server-warning\"><strong>This page must be opened through the server.</strong><br><br>Please visit <a href=\"http://localhost:3000\" style=\"color:var(--zag-red);\">http://localhost:3000</a> instead of opening the file directly.</div>";
+      } else {
+        container.innerHTML = "<div class=\"empty\">Could not load products.<br><small>" + escapeHtml(err.message) + "</small></div>";
+      }
+    }
+  }
+
+  var mdlImgs=[],mdlIdx=0;
+function cardClick(el){var pid=el.getAttribute("data-pid");if(pid)openModal(pid)}
+function openModal(pid){
+ var o=document.getElementById("productModal");o.classList.add("active");
+ document.getElementById("modalMainImg").src="";
+ document.getElementById("modalDetails").innerHTML='<div class="loading">Loading...</div>';
+ document.getElementById("modalPrev").style.display="none";
+ document.getElementById("modalNext").style.display="none";
+ document.body.style.overflow="hidden";
+ fetch("/api/products/"+pid).then(function(r){return r.json()}).then(function(p){
+  mdlImgs=p.images||[];mdlIdx=0;updMdlImg();
+  if(mdlImgs.length>1){document.getElementById("modalPrev").style.display="block";document.getElementById("modalNext").style.display="block"}
+  var h="<h3>"+esc(p.name)+"</h3>";
+  if(p.sku)h+='<div class="sku">'+esc(p.sku)+'</div>';
+  if(p.brand)h+='<div class="row"><span class="lbl">Brand</span><span class="val">'+esc(p.brand)+'</span></div>';
+  if(p.material)h+='<div class="row"><span class="lbl">Material</span><span class="val">'+esc(p.material)+'</span></div>';
+  if(p.specifications)h+='<div class="md">'+esc(p.specifications)+'</div>';
+  if(p.description)h+='<div class="md">'+esc(p.description)+'</div>';
+  if(p.crossRefs&&p.crossRefs.length){h+='<div class="md"><b>Cross References:</b><br>';p.crossRefs.forEach(function(cr){h+=esc(cr.ref_type)+': '+esc(cr.ref_number)+(cr.brand?' ('+esc(cr.brand)+')':'')+'<br>'});h+='</div>'};if(p.vehicles&&p.vehicles.length){h+='<div class="md"><b>Vehicle Fitment:</b><br>';p.vehicles.forEach(function(v){h+=esc(v.make)+' '+esc(v.model)+' ('+esc(v.year)+') '+esc(v.engine)+' '+esc(v.position)+'<br>'});h+='</div>'}
+  if(p.crossRefs&&p.crossRefs.length){h+='<div class="md"><b>Cross References:</b><br>';p.crossRefs.forEach(function(cr){h+=esc(cr.ref_type)+': '+esc(cr.ref_number)+(cr.brand?' ('+esc(cr.brand)+')':'')+'<br>'});h+='</div>'}
+  document.getElementById("modalDetails").innerHTML=h
+ }).catch(function(){document.getElementById("modalDetails").innerHTML='<div class="empty">Load failed</div>'})
+}
+function closeModal(){document.getElementById("productModal").classList.remove("active");document.body.style.overflow="";mdlImgs=[];mdlIdx=0}
+function updMdlImg(){if(!mdlImgs.length){document.getElementById("modalMainImg").src="";return}document.getElementById("modalMainImg").src=mdlImgs[mdlIdx];document.getElementById("modalCounter").textContent=(mdlIdx+1)+"/"+mdlImgs.length}
+function modalNext(){if(mdlImgs.length<=1)return;mdlIdx=(mdlIdx+1)%mdlImgs.length;updMdlImg()}
+function modalPrev(){if(mdlImgs.length<=1)return;mdlIdx=(mdlIdx-1+mdlImgs.length)%mdlImgs.length;updMdlImg()}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeModal();if(e.key==="ArrowRight")modalNext();if(e.key==="ArrowLeft")modalPrev()});
+function esc(v){return String(v||"").replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+var catId=null,catPage=1,catLimit=12;
+function showCatPage(cid,pg){
+ pg=pg||1;catId=cid;catPage=pg;
+ var c=document.getElementById("products-container");
+ c.innerHTML='<div class="loading">Loading...</div>';
+ fetch("/api/catalog?category="+cid+"&page="+pg+"&limit="+catLimit).then(function(r){return r.json()}).then(function(d){
+  var cn=d.categories.find(function(x){return x.id===cid});var nm=cn?cn.name:"Products";
+  if(!d.products.length){c.innerHTML='<button class="back-btn" onclick="showAllCategories()">Back</button><div class="empty">No products</div>';document.getElementById("pg-container").innerHTML="";return}
+  var h='<button class="back-btn" onclick="showAllCategories()">Back</button><h3>'+esc(nm)+'</h3><div class="grid">';
+  d.products.forEach(function(p){h+=renderProductCardPC(p,nm)});h+='</div>';c.innerHTML=h;bindCardDots();
+  renderPg(d.pagination,cid);c.scrollIntoView({behavior:"smooth"})
+ }).catch(function(e){c.innerHTML='<div class="empty">Error: '+esc(e.message)+'</div>'})
+}
+function renderPg(pg,cid){
+ var c=document.getElementById("pg-container");if(!pg||pg.totalPages<=1){c.innerHTML="";return}
+ var h='<div class="pagination">';h+='<button '+(pg.page<=1?"disabled":"")+' onclick="showCatPage(catId,'+(pg.page-1)+')">Prev</button>';
+ var s=Math.max(1,pg.page-2),e=Math.min(pg.totalPages,pg.page+2);
+ if(s>1){h+='<button onclick="showCatPage(catId,1)">1</button>';if(s>2)h+='<span class="pi">...</span>'}
+ for(var i=s;i<=e;i++)h+='<button class="'+(i===pg.page?"on":"")+'" onclick="showCatPage(catId,'+i+')">'+i+'</button>';
+ if(e<pg.totalPages){if(e<pg.totalPages-1)h+='<span class="pi">...</span>';h+='<button onclick="showCatPage(catId,'+pg.totalPages+')">'+pg.totalPages+'</button>'}
+ h+='<button '+(pg.page>=pg.totalPages?"disabled":"")+' onclick="showCatPage(catId,'+(pg.page+1)+')">Next</button>';
+ h+='<span class="pi">'+pg.total+' products</span></div>';c.innerHTML=h
+}
+function renderProductCardPC(pr,cn){
+ var imgs=pr.images||[],ih="",dh="";
+ if(imgs.length){ih=imgs.map(function(s,i){return'<img class="'+(i===0?"active":"inactive")+'" src="'+esc(s)+'" alt="'+esc(pr.name)+'" loading="lazy">'}).join("")}
+ else ih='<div class="no-img">No image</div>';
+ if(imgs.length>1){dh='<div class="card-dots">'+imgs.map(function(_,i){return'<span class="dot '+(i===0?"active":"")+'" data-dot="'+i+'"></span>'}).join("")+'</div>'}
+ return'<div class="card" data-pid="'+esc(pr.id)+'" onclick="cardClick(this)"><div class="card-images">'+ih+dh+'</div><div class="card-header">'+esc(cn||pr.name)+'</div><div class="card-body"><p><strong>'+esc(pr.name)+'</strong></p>'+(pr.sku?'<p class="material">SKU: '+esc(pr.sku)+'</p>':'')+(pr.material?'<p class="material">'+esc(pr.material)+'</p>':'')+'</div></div>'
+}
+var pc=document.createElement("div");pc.id="pg-container";document.getElementById("products").appendChild(pc);
+
+
+  loadProducts();
+
+  var productObserver = new MutationObserver(function () {
+    bindCardDots();
+  });
+  productObserver.observe(document.getElementById("products-container"), { childList: true, subtree: true });
+</script>
+
+
+  <!-- Floating WhatsApp Button -->
+  <a href="https://wa.me/8613588158817" class="whatsapp-float" target="_blank" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+    </svg>
+  </a>
+
+
+<div class="modal-overlay" id="productModal" onclick="if(event.target===this)closeModal()">
+<div class="modal-content">
+<button class="modal-close" onclick="closeModal()">X</button>
+<div class="modal-image" id="modalImage">
+<button class="nav-arrow nav-prev" id="modalPrev" onclick="modalPrev()"><</button>
+<img id="modalMainImg" src="" alt="">
+<span class="img-counter" id="modalCounter"></span>
+<button class="nav-arrow nav-next" id="modalNext" onclick="modalNext()">></button>
+</div>
+<div class="modal-details" id="modalDetails"></div>
+</div>
+</div>
+
+</body>
+</html>

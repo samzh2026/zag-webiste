@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZAG BRAKES | Professional Brake Components Manufacturer</title>
+  <meta name="description" content="ZAG BRAKES manufactures brake pads, brake discs, brake shoes and clutch plates for motorcycles, ATV and UTV applications.">
+  <style>
+    :root {
+      --zag-red: #e60012;
+      --zag-black: #151515;
+      --ink: #202020;
+      --muted: #656565;
+      --line: #dedede;
+      --surface: #f5f5f5;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 12px 5%;
+      background: var(--zag-black);
+      border-bottom: 5px solid var(--zag-red);
+    }
+
+    .logo-group {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 7px 16px;
+      color: var(--white);
+      text-decoration: none;
+      border: 2px solid var(--white);
+      line-height: 1;
+    }
+
+    .logo-text {
+      font-family: "Arial Black", Arial, sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .logo-text span { color: var(--zag-red); }
+    .header-slogan {
+      margin-top: 5px;
+      color: #cccccc;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a, .filter-btn {
+      color: var(--white);
+      text-decoration: none;
+      font-family: "Arial Black", Arial, sans-serif;
+      font-size: 13px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    nav a:hover { color: var(--zag-red); }
+    .hero {
+      position: relative;
+      min-height: 560px;
+      display: grid;
+      align-items: center;
+      padding: 90px 5% 120px;
+      overflow: hidden;
+      color: var(--white);
+      background:
+        linear-gradient(120deg, rgba(21, 21, 21, 0.98) 0%, rgba(21, 21, 21, 0.92) 52%, rgba(230, 0, 18, 0.86) 52%),
+        radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.16), transparent 34%),
+        var(--zag-black);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -140px;
+      width: 52vw;
+      min-width: 420px;
+      aspect-ratio: 1;
+      border: 44px solid rgba(255, 255, 255, 0.22);
+      border-radius: 50%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--zag-red);
+      font-family: "Arial Black", Arial, sans-serif;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Arial Black", Arial, sans-serif;
+      font-size: clamp(40px, 7vw, 76px);
+      line-height: 0.95;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .hero-copy {
+      max-width: 610px;
+      margin: 28px 0 0;
+      font-size: 18px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 22px;
+      color: var(--white);
+      font-family: "Arial Black", Arial, sans-serif;
+      font-size: 14px;
+      text-decoration: none;
+      background: var(--zag-red);
+      border: 2px solid var(--zag-red);
+    }
+
+    .button.secondary {
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.72);
+    }
+
+    section { padding: 72px 5%; }
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      margin: 0;
+      padding-left: 15px;
+      border-left: 10px solid var(--zag-red);
+      font-family: "Arial Black", Arial, sans-serif;
+      font-size: 32px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .about {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+      gap: 40px;
+      background: var(--surface);
+      line-height: 1.7;
+    }
+
+    .about p { margin: 0 0 16px; }
+    .quality-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .quality-list li {
+      padding: 16px;
+      background: var(--white);
+      border-left: 5px solid var(--zag-red);
+      font-weight: 700;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .filter-btn.active {
+      color: var(--white);
+      border-color: var(--zag-red);
+      background: var(--zag-red);
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+    }
+
+    .product-card {
+      display: grid;
+      grid-template-rows: 190px auto;
+      min-height: 430px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--zag-red);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    .product-media {
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .product-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .placeholder-part {
+      width: 170px;
+      height: 92px;
+      border-radius: 50% 50% 42% 42%;
+      background: linear-gradient(135deg, #2a2a2a, #676767);
+      border: 12px solid #1f1f1f;
+      box-shadow: inset 0 0 0 12px #9b9b9b;
+    }
+
+    .product-body { padding: 20px; }
+    .product-kicker {
+      margin: 0 0 8px;
+      color: var(--zag-red);
+      font-family: "Arial Black", Arial, sans-serif;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .product-body h3 {
+      min-height: 48px;
+      margin: 0 0 10px;
+      font-family: "Arial Black", Arial, sans-serif;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .product-desc {
+      min-height: 66px;
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .product-meta {
+      display: grid;
+      gap: 7px;
+      margin: 0 0 16px;
+      color: #404040;
+      font-size: 14px;
+    }
+
+    .features {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .features li {
+      padding: 6px 9px;
+      color: var(--zag-red);
+      font-weight: 700;
+      font-size: 12px;
+      background: #fff0f1;
+    }
+
+    .contact {
+      color: var(--white);
+      text-align: center;
+      background: var(--zag-black);
+    }
+
+    .contact .section-title {
+      display: inline-block;
+      color: var(--white);
+      text-align: left;
+    }
+
+    .contact a { color: var(--zag-red); }
+    .contact-lines {
+      display: grid;
+      gap: 10px;
+      margin: 28px 0;
+      font-size: 18px;
+    }
+
+    footer {
+      padding: 28px 5%;
+      color: #777;
+      text-align: center;
+      background: #000;
+      font-size: 13px;
+    }
+
+    .empty-state {
+      padding: 28px;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      background: var(--surface);
+    }
+
+    @media (max-width: 760px) {
+      header { align-items: flex-start; flex-direction: column; }
+      nav { justify-content: flex-start; }
+      .hero { min-height: 520px; padding-top: 72px; }
+      .section-head { align-items: flex-start; flex-direction: column; }
+      .about { grid-template-columns: 1fr; }
+      .product-card { grid-template-rows: 170px auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="logo-group" href="/">
+      <span class="logo-text">ZAG <span>BRAKES</span></span>
+      <span class="header-slogan">Safety in every stop</span>
+    </a>
+    <nav>
+      <a href="#products">PRODUCTS</a>
+      <a href="#about">ABOUT US</a>
+      <a href="#contact">CONTACT</a>
+      <a href="/admin.html">ADMIN</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">Professional brake component manufacturer</p>
+        <h1>ZAG BRAKES</h1>
+        <p class="hero-copy">
+          Premium brake pads, brake discs, brake shoes and clutch plates for motorcycles, ATV and UTV applications.
+          Built for stable friction, low noise and dependable stopping power.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#products">View Products</a>
+          <a class="button secondary" href="#contact">Send Inquiry</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <div>
+        <h2 class="section-title">Brake Solutions</h2>
+        <p>
+          ZAG BRAKES focuses on high-performance braking and clutch components for global powersports and replacement markets.
+          Our catalog structure is ready for brake pads, discs, shoes, clutch plates and future fitment data such as model, OE number,
+          material and application notes.
+        </p>
+        <p>
+          The website now reads product information from the backend, so new products and categories can be published
+          without editing the homepage HTML.
+        </p>
+      </div>
+      <ul class="quality-list">
+        <li>Brake pads: sintered and semi-metallic formulas</li>
+        <li>Brake discs: precision rotors for heat control</li>
+        <li>Brake shoes: smooth drum braking performance</li>
+        <li>Clutch plates: durable drivetrain friction components</li>
+        <li>Catalog-ready fields for SKU, vehicle models and features</li>
+      </ul>
+    </section>
+
+    <section id="products">
+      <div class="section-head">
+        <h2 class="section-title">Our Products</h2>
+        <div class="filters" id="categoryFilters"></div>
+      </div>
+      <div class="product-grid" id="productGrid">
+        <div class="empty-state">Loading products...</div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <h2 class="section-title">Get In Touch</h2>
+      <div class="contact-lines">
+        <div>WhatsApp: <a href="https://wa.me/8613588158817" target="_blank" rel="noreferrer">+86 13588158817</a></div>
+        <div>Email: <a href="mailto:info@zagbrakes.com">info@zagbrakes.com</a></div>
+      </div>
+      <a class="button" href="mailto:info@zagbrakes.com">Send Inquiry</a>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 ZAG BRAKES. All Rights Reserved. Manufactured by UCAN INDUSTRIES.
+  </footer>
+
+  <script>
+    const grid = document.getElementById("productGrid");
+    const filters = document.getElementById("categoryFilters");
+    let activeCategory = "all";
+    let catalog = { categories: [], products: [] };
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    function productImage(product) {
+      if (product.image) {
+        return `<img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}">`;
+      }
+      return "<div class=\"placeholder-part\" aria-hidden=\"true\"></div>";
+    }
+
+    function renderFilters() {
+      const buttons = [
+        `<button class="filter-btn ${activeCategory === "all" ? "active" : ""}" data-category="all">ALL</button>`,
+        ...catalog.categories.map((category) =>
+          `<button class="filter-btn ${activeCategory === category.id ? "active" : ""}" data-category="${escapeHtml(category.id)}">${escapeHtml(category.name)}</button>`
+        )
+      ];
+      filters.innerHTML = buttons.join("");
+    }
+
+    function renderProducts() {
+      const products = activeCategory === "all"
+        ? catalog.products
+        : catalog.products.filter((product) => product.categoryId === activeCategory);
+
+      if (!products.length) {
+        grid.innerHTML = "<div class=\"empty-state\">No published products in this category yet.</div>";
+        return;
+      }
+
+      grid.innerHTML = products.map((product) => {
+        const categoryName = product.category ? product.category.name : "Product";
+        const features = (product.features || []).map((feature) => `<li>${escapeHtml(feature)}</li>`).join("");
+        return `
+          <article class="product-card">
+            <div class="product-media">${productImage(product)}</div>
+            <div class="product-body">
+              <p class="product-kicker">${escapeHtml(categoryName)} · ${escapeHtml(product.sku)}</p>
+              <h3>${escapeHtml(product.name)}</h3>
+              <p class="product-desc">${escapeHtml(product.description)}</p>
+              <div class="product-meta">
+                <span><strong>Material:</strong> ${escapeHtml(product.material || "Custom")}</span>
+                <span><strong>Application:</strong> ${escapeHtml(product.vehicleModels || "Motorcycle / ATV / UTV")}</span>
+              </div>
+              <ul class="features">${features}</ul>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    filters.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-category]");
+      if (!button) return;
+      activeCategory = button.dataset.category;
+      renderFilters();
+      renderProducts();
+    });
+
+    fetch("/api/catalog")
+      .then((response) => response.json())
+      .then((data) => {
+        catalog = data;
+        renderFilters();
+        renderProducts();
+      })
+      .catch(() => {
+        grid.innerHTML = "<div class=\"empty-state\">Product data is unavailable. Please start the backend server.</div>";
+      });
+  </script>
+</body>
+</html>

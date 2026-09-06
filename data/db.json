@@ -1,0 +1,61 @@
+{
+    "categories":  [
+                       {
+                           "id":  "cat_brake_pad",
+                           "name":  "Brake Pads",
+                           "slug":  "brake-pads",
+                           "description":  "Sintered and semi-metallic pads for motorcycles, ATV and UTV applications.",
+                           "sortOrder":  10,
+                           "createdAt":  "2026-05-27T00:00:00.000Z",
+                           "updatedAt":  "2026-05-27T00:00:00.000Z"
+                       },
+                       {
+                           "id":  "cat_brake_disc",
+                           "name":  "Brake Discs",
+                           "slug":  "brake-discs",
+                           "description":  "Precision rotors engineered for heat control and stable stopping power.",
+                           "sortOrder":  20,
+                           "createdAt":  "2026-05-27T00:00:00.000Z",
+                           "updatedAt":  "2026-05-27T00:00:00.000Z"
+                       },
+                       {
+                           "id":  "cat_brake_shoe",
+                           "name":  "Brake Shoes",
+                           "slug":  "brake-shoes",
+                           "description":  "Durable drum brake shoes with smooth, consistent friction performance.",
+                           "sortOrder":  30,
+                           "createdAt":  "2026-05-27T00:00:00.000Z",
+                           "updatedAt":  "2026-05-27T00:00:00.000Z"
+                       },
+                       {
+                           "id":  "cat_clutch_plate",
+                           "name":  "Clutch Plates",
+                           "slug":  "clutch-plates",
+                           "description":  "Reliable clutch friction plates for motorcycles, ATV and UTV drivetrains.",
+                           "sortOrder":  40,
+                           "createdAt":  "2026-05-27T00:00:00.000Z",
+                           "updatedAt":  "2026-05-27T00:00:00.000Z"
+                       }
+                   ],
+    "products":  [
+                     {
+                         "id":  "prod_cbe489ae9788",
+                         "images":  [
+                                        "/uploads/1780070698636-500712df80.jpg"
+                                    ],
+                         "createdAt":  "2026-05-29T16:04:58.638Z",
+                         "updatedAt":  "2026-05-29T16:04:58.638Z",
+                         "sku":  "",
+                         "name":  "FRONT BRAKE PAD",
+                         "categoryId":  "cat_brake_pad",
+                         "material":  "",
+                         "vehicleModels":  "",
+                         "description":  "",
+                         "features":  [
+
+                                      ],
+                         "status":  "published",
+                         "sortOrder":  100
+                     }
+                 ]
+}

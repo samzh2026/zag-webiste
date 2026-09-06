@@ -1,0 +1,801 @@
+// =============================================================================
+// server.js - ZAG BRAKES Platform (Express + SQLite)
+// =============================================================================
+// Start:  node server.js
+// Dev:    node --watch server.js
+// =============================================================================
+
+require("dotenv").config();
+
+const express = require("express");
+const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
+const crypto = require("crypto");
+const fs = require("fs");
+
+const store = require("./lib/store");
+const { requireAuth, handleLogin } = require("./lib/auth");
+const { langMiddleware } = require("./lib/lang");
+
+// ---- Config ----
+const PORT = Number(process.env.PORT || 3000);
+const ROOT = __dirname;
+const UPLOAD_DIR = path.join(ROOT, "uploads");
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
+// ---- Express App ----
+const app = express();
+
+// CORS (allow admin and public access)
+app.use(cors());
+
+// Body parsing
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
+
+// Multi-language middleware (reads ?lang=)
+app.use(langMiddleware);
+
+// File upload (multer)
+const storage = multer.diskStorage({
+  destination: UPLOAD_DIR,
+  filename: (_req, file, cb) => {
+    const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].includes(
+      path.extname(file.originalname).toLowerCase()
+    ) ? path.extname(file.originalname).toLowerCase() : ".bin";
+    cb(null, `${Date.now()}-${crypto.randomBytes(5).toString("hex")}${safeExt}`);
+  }
+});
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } }); // 5 MB
+
+// ---- Helpers ----
+
+/** Parse locale JSON string -> object */
+function parseLocale(raw) {
+  if (!raw) return {};
+  if (typeof raw === "object") return raw;
+  try { return JSON.parse(raw); } catch (_) { return { en: String(raw) }; }
+}
+
+/** Flatten locale fields in an object to English (for admin display) */
+function flattenToEn(obj, fields) {
+  const result = { ...obj };
+  for (const f of fields) {
+    if (result[f]) result[f] = parseLocale(result[f]).en || "";
+  }
+  return result;
+}
+
+/** Flatten locale fields using req.locale (for public API) */
+function flattenToLang(req, obj, fields) {
+  const result = { ...obj };
+  for (const f of fields) {
+    if (result[f]) result[f] = req.locale(result[f]);
+  }
+  return result;
+}
+
+const PRODUCT_LOCALE_FIELDS = ["name", "material", "description", "specifications"];
+const CATEGORY_LOCALE_FIELDS = ["name", "description", "seo_title", "seo_desc", "seo_keywords"];
+
+// ---- Public API Routes ----
+
+// Health
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true, time: new Date().toISOString() });
+});
+
+// Login
+app.post("/api/login", handleLogin);
+
+// Product detail
+app.get("/api/products/:id", (req, res) => {
+  const product = store.getProductById(req.params.id);
+  if (!product) return res.status(404).json({ error: "Product not found" });
+  let p = flattenToLang(req, product, PRODUCT_LOCALE_FIELDS);
+  if (p.category) p.category = flattenToLang(req, p.category, ["name", "description"]);
+  p.images = (product.images || []).map(function(i) { return i.url; });
+  p.vehicles = (product.vehicles || []).map(function(v) { return {make:req.locale(v.make_name),model:req.locale(v.model_name),year:v.year,engine:v.displacement||'N/A',position:v.position}; });
+  res.json(p);
+});
+
+// Public catalog (with pagination)
+app.get("/api/catalog", (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 12;
+  const data = store.getPublicCatalog({
+    category: req.query.category,
+    q: req.query.q
+  });
+
+  // Flatten locale fields for front-end
+  data.categories = data.categories.map(c =>
+    flattenToLang(req, c, ["name", "description"])
+  );
+  data.products = data.products.map(p => {
+    p = flattenToLang(req, p, PRODUCT_LOCALE_FIELDS);
+    if (p.category) p.category = flattenToLang(req, p.category, ["name", "description"]);
+    return p;
+  });
+
+  // Pagination
+  const total = data.products.length;
+  const totalPages = Math.ceil(total / limit);
+  const start = (page - 1) * limit;
+  data.products = data.products.slice(start, start + limit);
+  data.pagination = { page, limit, total, totalPages };
+
+  res.json(data);
+});
+
+// Public categories
+app.get("/api/categories", (req, res) => {
+  const categories = store.getCategories().map(c =>
+    flattenToLang(req, c, ["name", "description"])
+  );
+  res.json(categories);
+});
+
+// Vehicle hierarchy (public)
+app.get("/api/vehicles", (req, res) => {
+  const { make, model, year } = req.query;
+
+  if (make) {
+    const makes = store.getMakes();
+    const found = makes.find(m => {
+      const name = parseLocale(m.name);
+      return m.slug === make || (name.en || "").toLowerCase() === make.toLowerCase();
+    });
+    if (!found) return res.json([]);
+
+    if (model) {
+      const models = store.getModels(found.id);
+      const foundModel = models.find(m => {
+        const name = parseLocale(m.name);
+        return m.slug === model || (name.en || "").toLowerCase() === model.toLowerCase();
+      });
+      if (!foundModel) return res.json([]);
+
+      if (year) {
+        const years = store.getYears(foundModel.id);
+        const foundYear = years.find(y => String(y.year) === String(year));
+        if (!foundYear) return res.json([]);
+
+        const engines = store.getEngineSizes(foundYear.id);
+        return res.json(engines.map(e => {
+          const flat = flattenToLang(req, { name: found.name }, ["name"]);
+          return { ...e, makeName: flat.name, modelName: parseLocale(foundModel.name).en };
+        }));
+      }
+      const years = store.getYears(foundModel.id);
+      return res.json(years.map(y => ({
+        ...y,
+        makeName: parseLocale(found.name).en,
+        modelName: parseLocale(foundModel.name).en
+      })));
+    }
+    const models = store.getModels(found.id);
+    return res.json(models.map(m => ({
+      ...m,
+      makeName: parseLocale(found.name).en
+    })));
+  }
+  res.json([]);
+});
+
+app.get("/api/vehicles/makes", (_req, res) => {
+  const makes = store.getMakes().map(m =>
+    flattenToLang(_req, m, ["name"])
+  );
+  res.json(makes);
+});
+
+app.get("/api/vehicles/models", (req, res) => {
+  if (!req.query.makeId) return res.json([]);
+  const models = store.getModels(req.query.makeId).map(m => {
+    m = flattenToLang(req, m, ["name"]);
+    return m;
+  });
+  res.json(models);
+});
+
+app.get("/api/vehicles/years", (req, res) => {
+  if (!req.query.modelId) return res.json([]);
+  res.json(store.getYears(req.query.modelId));
+});
+
+app.get("/api/vehicles/engines", (req, res) => {
+  if (!req.query.yearId) return res.json([]);
+  res.json(store.getEngineSizes(req.query.yearId));
+});
+
+app.get("/api/vehicles/search", (req, res) => {
+  const { makeId, modelId, yearId } = req.query;
+  if (!makeId && !modelId && !yearId) return res.json([]);
+  // Collect all engine size IDs for the selected make/model/year
+  let engineSizeIds = [];
+  if (yearId) {
+    engineSizeIds = store.getEngineSizes(yearId).map(function(e) { return e.id; });
+  } else if (modelId) {
+    store.getYears(modelId).forEach(function(y) {
+      engineSizeIds = engineSizeIds.concat(store.getEngineSizes(y.id).map(function(e) { return e.id; }));
+    });
+  } else if (makeId) {
+    store.getModels(makeId).forEach(function(m) {
+      store.getYears(m.id).forEach(function(y) {
+        engineSizeIds = engineSizeIds.concat(store.getEngineSizes(y.id).map(function(e) { return e.id; }));
+      });
+    });
+  }
+  if (!engineSizeIds.length) return res.json([]);
+  // Direct query - much faster than filtering all apps
+  const products = store.getProductsByEngineSizeIds(engineSizeIds);
+  const result = products.map(function(p) {
+    let product = flattenToLang(req, p, PRODUCT_LOCALE_FIELDS);
+    product.images = db().prepare("SELECT url FROM product_images WHERE product_id = ? ORDER BY sort_order ASC").all(p.id).map(function(i) { return i.url; });
+    return product;
+  });
+  res.json(result);
+});
+
+app.get("/api/vehicles/:engineSizeId/products", (req, res) => {
+  const apps = store.getApplications ? store.getApplications(null).filter(a => a.engine_size_id === req.params.engineSizeId) : [];
+  const products = apps.map(a => {
+    let p = store.getProductById(a.product_id);
+    if (!p) return null;
+    p = flattenToLang(req, p, PRODUCT_LOCALE_FIELDS);
+    return p;
+  }).filter(Boolean);
+  res.json(products);
+});
+
+// Search
+app.get("/api/search", (req, res) => {
+  const results = store.universalSearch(req.query.q);
+  res.json(results.map(r => ({
+    ...r,
+    product: flattenToLang(req, r.product, PRODUCT_LOCALE_FIELDS)
+  })));
+});
+
+app.get("/api/cross-reference", (req, res) => {
+  const results = store.searchByCrossReference(req.query.q, req.query.type);
+  res.json(results.map(r => {
+    r.name = parseLocale(r.name).en || r.name;
+    return r;
+  }));
+});
+
+app.get("/api/dimensions", (req, res) => {
+  const results = store.searchByDimensions(
+    parseFloat(req.query.length),
+    parseFloat(req.query.width),
+    parseFloat(req.query.thickness),
+    parseFloat(req.query.tolerance) || 1
+  );
+  res.json(results.map(p => flattenToLang(req, p, PRODUCT_LOCALE_FIELDS)));
+});
+
+// Blog (public)
+app.get("/api/blog", (req, res) => {
+  const posts = store.getBlogPosts({ status: "published" }).map(p => {
+    p.title = parseLocale(p.title).en || p.title;
+    p.excerpt = parseLocale(p.excerpt).en || p.excerpt;
+    return p;
+  });
+  res.json(posts);
+});
+
+app.get("/api/blog/:slug", (req, res) => {
+  const post = store.getBlogBySlug(req.params.slug);
+  if (!post) return res.status(404).json({ error: "Not found" });
+  post.title = parseLocale(post.title).en || post.title;
+  post.content = parseLocale(post.content).en || post.content;
+  post.excerpt = parseLocale(post.excerpt).en || post.excerpt;
+  res.json(post);
+});
+
+// Sitemap
+app.get("/api/sitemap.xml", (_req, res) => {
+  res.type("application/xml");
+  const products = store.getProducts({ status: "published" });
+  const blog = store.getBlogPosts({ status: "published" });
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+  xml += '<url><loc>https://www.zagbrakes.com/</loc><changefreq>weekly</changefreq></url>\n';
+  for (const p of products) {
+    xml += `<url><loc>https://www.zagbrakes.com/product/${p.id}</loc></url>\n`;
+  }
+  for (const b of blog) {
+    xml += `<url><loc>https://www.zagbrakes.com/blog/${b.slug}</loc></url>\n`;
+  }
+  xml += '</urlset>';
+  res.send(xml);
+});
+
+// ---- Admin API Routes ----
+
+// Admin dashboard
+app.get("/api/admin/dashboard", requireAuth, (_req, res) => {
+  res.json(store.getDashboardStats());
+});
+
+// Admin catalog (full, matches old admin.html camelCase format)
+app.get("/api/admin/catalog", requireAuth, (_req, res) => {
+  const categories = store.getCategories().map(c => {
+    c = flattenToEn(c, CATEGORY_LOCALE_FIELDS);
+    return {
+      id: c.id,
+      name: c.name,
+      description: c.description,
+      slug: c.slug,
+      sortOrder: c.sort_order,
+      seoTitle: c.seo_title,
+      seoDesc: c.seo_desc,
+      seoKeywords: c.seo_keywords,
+      createdAt: c.created_at,
+      updatedAt: c.updated_at
+    };
+  });
+  const products = store.getProducts({ status: "all" }).map(p => {
+    const images = store.getProductById ? store.getProductById(p.id)?.images || [] : [];
+    p = flattenToEn(p, PRODUCT_LOCALE_FIELDS);
+    return {
+      id: p.id,
+      sku: p.sku,
+      name: p.name,
+      brand: p.brand,
+      categoryId: p.category_id,
+      material: p.material,
+      description: p.description,
+      specifications: p.specifications,
+      length: p.length,
+      width: p.width,
+      thickness: p.thickness,
+      status: p.status,
+      sortOrder: p.sort_order,
+      images: images.map(img => img.url),
+      createdAt: p.created_at,
+      updatedAt: p.updated_at
+    };
+  });
+  res.json({ categories, products });
+});
+
+// Admin CRUD - Categories
+app.post("/api/admin/categories", requireAuth, (req, res) => {
+  try {
+    const cat = store.createCategory(req.body);
+    res.json(cat);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put("/api/admin/categories/:id", requireAuth, (req, res) => {
+  try {
+    const cat = store.updateCategory(req.params.id, req.body);
+    if (!cat) return res.status(404).json({ error: "Not found" });
+    res.json(cat);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete("/api/admin/categories/:id", requireAuth, (req, res) => {
+  const result = store.deleteCategory(req.params.id);
+  if (result.error) return res.status(400).json(result);
+  res.json(result);
+});
+
+// Admin CRUD - Products
+app.get("/api/admin/products/:id", requireAuth, (req, res) => {
+  const product = store.getProductById(req.params.id);
+  if (!product) return res.status(404).json({ error: "Not found" });
+  res.json(product);
+});
+
+app.post("/api/admin/products", requireAuth, upload.any(), (req, res) => {
+  try {
+    const body = { ...req.body };
+    if (body.categoryId) { body.categoryId = body.categoryId; delete body.category_id; }
+    const product = store.createProduct(body);
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const url = "/uploads/" + file.filename;
+        store.addProductImage(product.id, url);
+      }
+    }
+    res.json(store.getProductById(product.id));
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put("/api/admin/products/:id", requireAuth, upload.any(), (req, res) => {
+  try {
+    const product = store.updateProduct(req.params.id, req.body);
+    if (!product) return res.status(404).json({ error: "Not found" });
+
+    // Handle image removals
+    const existingImages = db().prepare("SELECT * FROM product_images WHERE product_id = ? ORDER BY sort_order ASC").all(product.id);
+    Object.keys(req.body).forEach(function(key) {
+      const m = key.match(/^removeImage(\d+)$/);
+      if (m) {
+        const idx = parseInt(m[1]);
+        if (existingImages[idx]) store.removeProductImage(existingImages[idx].id);
+      }
+    });
+
+    // Handle new image uploads
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const url = "/uploads/" + file.filename;
+        store.addProductImage(product.id, url);
+      }
+    }
+
+    // Handle features → parse and update product_vehicles
+    if (req.body.features && req.body.features.trim()) {
+      const lines = req.body.features.split(/\n|;/).map(s => s.trim()).filter(Boolean);
+      if (lines.length > 0) {
+        // 更新specifications字段的features
+        try {
+          let specs = {};
+          try { specs = JSON.parse(product.specifications || '{}'); } catch(e) {}
+          specs.features = lines;
+          specs.vehicleModels = lines.join('; ');
+          db().prepare("UPDATE products SET specifications=? WHERE id=?")
+            .run(JSON.stringify(specs), product.id);
+        } catch(se) { console.error("specs update error:", se.message); }
+
+        // 重新解析并写入product_vehicles
+        const KNOWN_MAKES = new Set([
+          "HONDA","YAMAHA","SUZUKI","KAWASAKI","KYMCO","BETTER","POLARIS","SYM",
+          "TRIUMPH","DUCATI","KTM","BMW","APRILIA","PIAGGIO","VESPA","CPI",
+          "LONCIN","LIFAN","ZONGSHEN","BAJAJ","KEEWAY","BENELLI","CAN-AM",
+          "ARCTIC","DERBI","GILERA","PEUGEOT","CF","CFMOTO","HAOJUE",
+          "HARLEY","INDIAN","VICTORY","BUELL","MV","AGUSTA","MOTO","GUZZI",
+          "HUSQVARNA","HUSABERG","SHERCO","BETA","RIEJU","FANTIC","GAS-GAS",
+          "DAELIM","HYOSUNG","KUBA","SYM","ADLY","AEON","LIFAN","ZONGSHEN",
+          "JOHN","DEERE","CAN","CANAM","ARCTIC CAT","QUADZILLA","LEXMOTO",
+        ]);
+
+        function parseLine(raw) {
+          const line = raw.trim();
+          if (!line || line.length < 3) return null;
+          let yearStart = null, yearEnd = null, rest = line;
+          const ym = line.match(/[\s,;]+(\d{2,4})-(\d{2,4})\s*[,;.]*\s*$/);
+          if (ym) {
+            let y1 = parseInt(ym[1]), y2 = parseInt(ym[2]);
+            if (y1 < 100) y1 += y1 >= 50 ? 1900 : 2000;
+            if (y2 < 100) y2 += y2 >= 50 ? 1900 : 2000;
+            yearStart = y1; yearEnd = y2;
+            rest = line.slice(0, ym.index).trim();
+          }
+          let position = "F";
+          const pm = rest.match(/\s+(F(?:\([^)]*\))?|R(?:\([^)]*\))?|F&R|F\/R)\s*$/i);
+          if (pm) {
+            const p = pm[1].toUpperCase();
+            if (p.startsWith("R")) position = "R";
+            else if (p.includes("&") || p.includes("/")) position = "F&R";
+            rest = rest.slice(0, pm.index).trim();
+          }
+          rest = rest.replace(/[,;.\-]+$/, "").trim();
+          if (!rest) return null;
+          const words = rest.split(/\s+/);
+          let make = null, modelParts = [];
+          for (let n = Math.min(2, words.length); n >= 1; n--) {
+            const c = words.slice(0, n).join(" ").toUpperCase();
+            if (KNOWN_MAKES.has(c)) { make = c; modelParts = words.slice(n); break; }
+          }
+          if (!make) { make = words[0].toUpperCase(); modelParts = words.slice(1); }
+          return { make, model: modelParts.join(" ").trim() || "Unknown", position, yearStart, yearEnd };
+        }
+
+        function slugify(s) {
+          return String(s||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80);
+        }
+
+        function getOrCreate(table, where, whereParams, insertSql, insertParams) {
+          let row = db().prepare("SELECT id FROM "+table+" WHERE "+where).get(...whereParams);
+          if (!row) { db().prepare(insertSql).run(...insertParams); row = db().prepare("SELECT id FROM "+table+" WHERE "+where).get(...whereParams); }
+          return row ? row.id : null;
+        }
+
+        const { v4: uuidv4 } = require("uuid");
+        function genId(p) { return p+"_"+uuidv4().replace(/-/g,"").slice(0,12); }
+
+        // 删除现有关联，重新建立
+        db().prepare("DELETE FROM product_vehicles WHERE product_id=?").run(product.id);
+
+        for (const line of lines) {
+          const parsed = parseLine(line);
+          if (!parsed) continue;
+          const { make, model, position, yearStart, yearEnd } = parsed;
+          const makeSlug = slugify(make);
+          const modelSlug = slugify(model);
+
+          const makeId = getOrCreate("vehicle_makes", "slug=?", [makeSlug],
+            "INSERT OR IGNORE INTO vehicle_makes (id,name,slug,sort_order) VALUES (?,?,?,100)",
+            [genId("vmake"), JSON.stringify({en:make}), makeSlug]);
+          if (!makeId) continue;
+
+          const modelId = getOrCreate("vehicle_models", "make_id=? AND slug=?", [makeId, modelSlug],
+            "INSERT OR IGNORE INTO vehicle_models (id,make_id,name,slug,sort_order) VALUES (?,?,?,?,100)",
+            [genId("vmod"), makeId, JSON.stringify({en:model}), modelSlug]);
+          if (!modelId) continue;
+
+          const years = [];
+          if (yearStart && yearEnd) { for (let y=yearStart; y<=yearEnd; y++) years.push(y); }
+          else if (yearStart) years.push(yearStart);
+          else years.push(0);
+
+          for (const yr of years) {
+            const yearId = getOrCreate("vehicle_years", "model_id=? AND year=?", [modelId, yr],
+              "INSERT OR IGNORE INTO vehicle_years (id,model_id,year) VALUES (?,?,?)",
+              [genId("vyr"), modelId, yr]);
+            if (!yearId) continue;
+            const esId = getOrCreate("vehicle_engine_sizes", "year_id=? AND displacement=?", [yearId,"standard"],
+              "INSERT OR IGNORE INTO vehicle_engine_sizes (id,year_id,displacement,engine_type) VALUES (?,?,?,'')",
+              [genId("ves"), yearId]);
+            if (!esId) continue;
+            db().prepare("INSERT OR IGNORE INTO product_vehicles (product_id,engine_size_id,position,notes) VALUES (?,?,?,?)")
+              .run(product.id, esId, position, line.trim());
+          }
+        }
+      }
+    }
+
+    // Handle EBC number (cross reference)
+    if (req.body.ebcNumber && req.body.ebcNumber.trim()) {
+      const ebcNum = req.body.ebcNumber.trim();
+      // 删除旧的EBC cross ref，重新插入
+      db().prepare("DELETE FROM cross_references WHERE product_id=? AND ref_type='EBC'").run(product.id);
+      store.addCrossReference(product.id, 'EBC', ebcNum, 'EBC', '');
+    }
+
+    // Handle vehicle fitments
+    if (req.body.fitments) {
+      try {
+        const fitments = JSON.parse(req.body.fitments);
+        if (Array.isArray(fitments) && fitments.length > 0) {
+          // Remove existing fitments for this product
+          db().prepare("DELETE FROM product_vehicles WHERE product_id = ?").run(product.id);
+          // Add new fitments
+          for (const f of fitments) {
+            if (f.engineSizeId) {
+              store.addApplication(product.id, f.engineSizeId, f.position || "F", f.notes || "");
+            }
+          }
+        }
+      } catch(fe) { console.error("Fitment parse error:", fe.message); }
+    }
+
+    res.json(store.getProductById(product.id));
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete("/api/admin/products/:id", requireAuth, (req, res) => {
+  store.deleteProduct(req.params.id);
+  res.json({ ok: true });
+});
+
+// Admin - Cross References
+app.get("/api/admin/cross-references", requireAuth, (req, res) => {
+  const productId = req.query.productId;
+  if (productId) return res.json(store.getCrossReferences(productId));
+  res.json(store.exportCrossReferencesCSV());
+});
+app.post("/api/admin/cross-references", requireAuth, (req, res) => {
+  try {
+    const ref = store.addCrossReference(
+      req.body.productId, req.body.refType, req.body.refNumber, req.body.brand, req.body.notes
+    );
+    res.json(ref);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.post("/api/admin/cross-references/import", requireAuth, (req, res) => {
+  try {
+    const result = store.importCrossReferencesCSV(req.body.rows || []);
+    res.json(result);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.get("/api/admin/cross-references/export", requireAuth, (_req, res) => {
+  res.json(store.exportCrossReferencesCSV());
+});
+app.delete("/api/admin/cross-references/:id", requireAuth, (req, res) => {
+  store.removeCrossReference(req.params.id);
+  res.json({ ok: true });
+});
+
+// Admin - Vehicle hierarchy
+app.get("/api/admin/vehicles/makes", requireAuth, (_req, res) => {
+  res.json(store.getMakes().map(m => flattenToEn(m, ["name"])));
+});
+app.post("/api/admin/vehicles/makes", requireAuth, (req, res) => {
+  try { res.json(store.createMake(req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put("/api/admin/vehicles/makes/:id", requireAuth, (req, res) => {
+  try { res.json(store.updateMake(req.params.id, req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete("/api/admin/vehicles/makes/:id", requireAuth, (req, res) => {
+  store.deleteMake(req.params.id);
+  res.json({ ok: true });
+});
+app.get("/api/admin/vehicles/models", requireAuth, (req, res) => {
+  if (!req.query.makeId) return res.json([]);
+  res.json(store.getModels(req.query.makeId).map(m => flattenToEn(m, ["name"])));
+});
+app.post("/api/admin/vehicles/models", requireAuth, (req, res) => {
+  try { res.json(store.createModel(req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put("/api/admin/vehicles/models/:id", requireAuth, (req, res) => {
+  try { res.json(store.updateModel(req.params.id, req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete("/api/admin/vehicles/models/:id", requireAuth, (req, res) => {
+  store.deleteModel(req.params.id);
+  res.json({ ok: true });
+});
+app.get("/api/admin/vehicles/years", requireAuth, (req, res) => {
+  if (!req.query.modelId) return res.json([]);
+  res.json(store.getYears(req.query.modelId));
+});
+app.post("/api/admin/vehicles/years", requireAuth, (req, res) => {
+  try { res.json(store.createYear(req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put("/api/admin/vehicles/years/:id", requireAuth, (req, res) => {
+  try { res.json(store.updateYear(req.params.id, req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete("/api/admin/vehicles/years/:id", requireAuth, (req, res) => {
+  store.deleteYear(req.params.id);
+  res.json({ ok: true });
+});
+app.get("/api/admin/vehicles/engine-sizes", requireAuth, (req, res) => {
+  if (!req.query.yearId) return res.json([]);
+  res.json(store.getEngineSizes(req.query.yearId));
+});
+app.post("/api/admin/vehicles/engine-sizes", requireAuth, (req, res) => {
+  try { res.json(store.createEngineSize(req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put("/api/admin/vehicles/engine-sizes/:id", requireAuth, (req, res) => {
+  try { res.json(store.updateEngineSize(req.params.id, req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete("/api/admin/vehicles/engine-sizes/:id", requireAuth, (req, res) => {
+  store.deleteEngineSize(req.params.id);
+  res.json({ ok: true });
+});
+
+// Admin - Applications
+app.get("/api/admin/applications", requireAuth, (req, res) => {
+  if (!req.query.productId) return res.json([]);
+  res.json(store.getApplications(req.query.productId));
+});
+app.post("/api/admin/applications", requireAuth, (req, res) => {
+  try {
+    res.json(store.addApplication(req.body.productId, req.body.engineSizeId, req.body.position, req.body.notes));
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.post("/api/admin/applications/batch", requireAuth, (req, res) => {
+  try {
+    res.json(store.batchAddApplications(req.body.productId, req.body.entries || []));
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete("/api/admin/applications/:productId/:engineSizeId/:position", requireAuth, (req, res) => {
+  store.removeApplication(req.params.productId, req.params.engineSizeId, req.params.position);
+  res.json({ ok: true });
+});
+
+// Admin - Blog
+app.get("/api/admin/blog", requireAuth, (req, res) => {
+  res.json(store.getBlogPosts({}).map(p => {
+    p.title = flattenToEn(p, ["title"]).title;
+    p.content = flattenToEn(p, ["content"]).content;
+    p.excerpt = flattenToEn(p, ["excerpt"]).excerpt;
+    return p;
+  }));
+});
+app.post("/api/admin/blog", requireAuth, (req, res) => {
+  try { res.json(store.createBlogPost(req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put("/api/admin/blog/:id", requireAuth, (req, res) => {
+  try { res.json(store.updateBlogPost(req.params.id, req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete("/api/admin/blog/:id", requireAuth, (req, res) => {
+  store.deleteBlogPost(req.params.id);
+  res.json({ ok: true });
+});
+
+// Admin - SEO
+app.get("/api/admin/seo", requireAuth, (req, res) => {
+  res.json(store.getSeo(req.query.page || "/"));
+});
+app.put("/api/admin/seo", requireAuth, (req, res) => {
+  try { res.json(store.upsertSeo(req.body.pagePath || "/", req.body)); } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+// Admin - Users
+app.get("/api/admin/users", requireAuth, (_req, res) => {
+  res.json(store.getUsers());
+});
+app.post("/api/admin/users", requireAuth, (req, res) => {
+  const { username, password, role } = req.body;
+  if (!username || !password) return res.status(400).json({ error: "Username and password required" });
+  const hash = crypto.createHash("sha256").update(password).digest("hex");
+  const user = store.createUser(username, hash, role || "admin");
+  res.json(user);
+});
+app.put("/api/admin/users/:id/password", requireAuth, (req, res) => {
+  if (!req.body.password) return res.status(400).json({ error: "Password required" });
+  const hash = crypto.createHash("sha256").update(req.body.password).digest("hex");
+  store.updateUserPassword(req.params.id, hash);
+  res.json({ ok: true });
+});
+app.delete("/api/admin/users/:id", requireAuth, (req, res) => {
+  store.deleteUser(req.params.id);
+  res.json({ ok: true });
+});
+
+// Admin - Settings
+app.get("/api/admin/settings", requireAuth, (_req, res) => {
+  res.json(store.getAllSettings());
+});
+app.put("/api/admin/settings", requireAuth, (req, res) => {
+  try {
+    for (const [k, v] of Object.entries(req.body || {})) {
+      store.setSetting(k, String(v));
+    }
+    res.json(store.getAllSettings());
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+// Admin - Import
+app.post("/api/admin/import", requireAuth, (req, res) => {
+  try {
+    const { products } = req.body || {};
+    if (!Array.isArray(products)) return res.status(400).json({ error: "products array required" });
+    let imported = 0;
+    for (const p of products) {
+      if (p.sku && store.getProducts ? store.getProducts({}).some(ep => ep.sku === p.sku) : false) continue;
+      store.createProduct(p);
+      imported++;
+    }
+    res.json({ ok: true, imported });
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+app.get("/api/admin/export-csv", requireAuth, (_req, res) => {
+  res.json(store.exportCrossReferencesCSV());
+});
+
+// ---- Static Files ----
+app.use(express.static(ROOT, {
+  maxAge: "1d",
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith(".html")) res.setHeader("Cache-Control", "no-cache");
+  }
+}));
+
+// ---- Fallback (SPA) ----
+app.get("*", (req, res) => {
+  if (req.path.startsWith("/api/")) {
+    return res.status(404).json({ error: "API route not found" });
+  }
+  const indexPath = path.join(ROOT, "index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send("Not found");
+  }
+});
+
+// ---- Error Handling ----
+app.use((err, _req, res, _next) => {
+  console.error("Server error:", err.message);
+  res.status(500).json({ error: "Internal server error" });
+});
+
+// ---- Start Server ----
+app.listen(PORT, () => {
+  console.log(`ZAG BRAKES Platform running at http://localhost:${PORT}`);
+  console.log(`Admin: http://localhost:${PORT}/admin.html`);
+  console.log(`Database: data/zag.db`);
+});
+
+// Helper to access db for image cleanup
+function db() {
+  return store.initDatabase ? store.initDatabase() : null;
+}
+
+module.exports = app;

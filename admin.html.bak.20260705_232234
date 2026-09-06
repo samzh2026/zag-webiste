@@ -1,0 +1,1678 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZAG BRAKES Admin</title>
+  <style>
+    :root {
+      --red: #e60012;
+      --red-dark: #b8000e;
+      --black: #151515;
+      --ink: #202020;
+      --muted: #696969;
+      --line: #dddddd;
+      --surface: #f5f5f5;
+      --white: #ffffff;
+      --radius: 0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--surface);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 5%;
+      color: var(--white);
+      background: var(--black);
+      border-bottom: 4px solid var(--red);
+    }
+    .brand {
+      font-family: "Arial Black", "Impact", sans-serif;
+      font-size: 22px;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+    .brand span { color: var(--red); }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--line);
+      padding: 0 5%;
+    }
+    .tab {
+      padding: 14px 24px;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--muted);
+      border-bottom: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .tab.active {
+      color: var(--red);
+      border-bottom-color: var(--red);
+    }
+    .tab:hover { color: var(--ink); }
+
+    /* Main */
+    main {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 24px 5% 60px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Panel */
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--line);
+      margin-bottom: 20px;
+    }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+      background: #fafafa;
+    }
+    .panel-head h2 {
+      font-family: "Arial Black", "Impact", sans-serif;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .panel-body { padding: 20px; }
+
+    /* Forms */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-grid .span-2 { grid-column: 1 / -1; }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink);
+    }
+    label .hint {
+      font-weight: 400;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      font: inherit;
+      font-size: 14px;
+      background: var(--white);
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--red);
+      box-shadow: 0 0 0 2px rgba(230,0,18,0.1);
+    }
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    /* Buttons */
+    button, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 40px;
+      padding: 0 18px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid var(--red);
+      background: var(--red);
+      color: var(--white);
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    button:hover { background: var(--red-dark); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    button.secondary {
+      background: var(--white);
+      color: var(--ink);
+      border-color: var(--line);
+    }
+    button.secondary:hover { background: #f0f0f0; }
+
+    button.danger {
+      background: #8f101b;
+      border-color: #8f101b;
+    }
+    button.danger:hover { background: #6a0c14; }
+
+    button.small {
+      min-height: 32px;
+      padding: 0 12px;
+      font-size: 11px;
+    }
+
+    button.icon-btn {
+      min-height: 32px;
+      width: 32px;
+      padding: 0;
+      border-radius: 50%;
+      font-size: 16px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .message {
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 20px;
+      color: var(--muted);
+    }
+    .message.success { color: #2e7d32; }
+    .message.error { color: var(--red); }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--line);
+    }
+    th {
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #fafafa;
+      color: var(--muted);
+    }
+    tr:hover td { background: #fafafa; }
+    .thumbs { display: flex; gap: 4px; }
+    .thumb {
+      width: 48px;
+      height: 36px;
+      object-fit: cover;
+      background: #eee;
+      border: 1px solid var(--line);
+    }
+    .muted { color: var(--muted); }
+    .hidden { display: none !important; }
+
+    /* Product form - Modal */
+    #productFormWrap {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      padding: 30px 16px;
+      overflow-y: auto;
+    }
+    #productFormWrap.visible { display: block; }
+    #productFormWrap > #productFormInner {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fffafa;
+      border: 2px solid var(--red);
+      padding: 20px;
+      border-radius: 4px;
+      position: relative;
+    }
+    #productFormCloseBtn {
+      position: absolute;
+      top: 10px; right: 14px;
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #888;
+      line-height: 1;
+    }
+    #productFormCloseBtn:hover { color: var(--red); }
+    #productFormWrap h3 {
+      font-family: "Arial Black", "Impact", sans-serif;
+      font-size: 15px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      color: var(--red);
+    }
+
+    /* Image upload area */
+    .upload-section {
+      border: 2px dashed var(--line);
+      padding: 20px;
+      text-align: center;
+      background: #fafafa;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .upload-section:hover, .upload-section.drag-over {
+      border-color: var(--red);
+      background: #fff5f5;
+    }
+    .upload-section p { font-size: 13px; color: var(--muted); }
+    .upload-section p strong { color: var(--red); }
+
+    .image-previews {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .image-preview {
+      position: relative;
+      border: 1px solid var(--line);
+      background: #fafafa;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .image-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .image-preview .remove-img {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 28px;
+      height: 28px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      padding: 0;
+      min-height: 28px;
+    }
+    .image-preview .img-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      text-align: center;
+    }
+
+    /* Category inline manager */
+    .cat-inline {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .cat-inline select { flex: 1; min-width: 200px; }
+
+    .cat-manager {
+      margin-top: 12px;
+      padding: 14px;
+      background: #fafafa;
+      border: 1px solid var(--line);
+      display: none;
+    }
+    .cat-manager.open { display: block; }
+    .cat-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .cat-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--white);
+      border: 1px solid var(--line);
+    }
+    .cat-tag .cat-del {
+      cursor: pointer;
+      color: var(--red);
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1;
+    }
+    .cat-tag .cat-del:hover { color: #6a0c14; }
+
+    /* Login */
+    .login-box {
+      max-width: 420px;
+      margin: 60px auto;
+    }
+
+    /* Save bar */
+    .save-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--black);
+      color: var(--white);
+      margin-top: 16px;
+    }
+    .save-bar .msg { font-size: 13px; font-weight: 600; }
+
+    /* Inline add form */
+    .inline-add {
+      display: none;
+      margin-top: 6px;
+      gap: 4px;
+      align-items: center;
+    }
+    .inline-add.visible { display: flex; }
+    .inline-add input {
+      flex: 1;
+      min-height: 32px;
+      font-size: 12px;
+    }
+
+    /* Fitment tags */
+    .fitment-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .fitment-row select { flex: 1; min-width: 130px; }
+
+    .fitment-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .fitment-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      color: #2e7d32;
+    }
+    .fitment-tag .fitment-del {
+      cursor: pointer;
+      color: var(--red);
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .image-previews { grid-template-columns: 1fr 1fr; }
+      .fitment-row { flex-direction: column; }
+      table, thead, tbody, tr, th, td { display: block; }
+      thead { display: none; }
+      tr { border-bottom: 2px solid var(--line); margin-bottom: 8px; }
+      td { border: 0; padding: 6px 12px; }
+      td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 2px;
+      }
+    }
+
+  /* ZAG Security: default-lock all admin areas */
+  #adminTabs, #tab-products, #productFormWrap, #tab-categories {
+    display: none !important;
+  }
+  /* Only unlock when auth-passed */
+  body.auth-passed #adminTabs {
+    display: block !important;
+  }
+  body.auth-passed .tab-panel.active {
+    display: block !important;
+  }
+  body.auth-passed #productFormWrap {
+    display: block !important;
+  }
+  body.auth-passed #tab-products {
+    display: block !important;
+  }
+  body.auth-passed #tab-categories {
+    display: block !important;
+  }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="brand">ZAG <span>BRAKES</span> Admin</a>
+  <div class="header-actions">
+    <a class="btn secondary" href="/" target="_blank" rel="noreferrer" style="min-height:36px;font-size:11px;">View Site</a>
+    <button class="secondary small hidden" id="logoutBtn" type="button">Logout</button>
+  </div>
+</header>
+
+<nav class="tabs hidden" id="adminTabs">
+  <button class="tab active" data-tab="products">Products</button>
+  <button class="tab" data-tab="categories">Categories</button>
+  <button class="tab" data-tab="import">Import</button>
+</nav>
+
+<main>
+
+  <!-- Login -->
+  <section class="panel login-box" id="loginPanel">
+    <div class="panel-head"><h2>Admin Login</h2></div>
+    <form class="panel-body form-grid" id="loginForm">
+      <label class="span-2">
+        Username
+        <input type="text" name="username" value="admin" autocomplete="username" required>
+      </label>
+      <label class="span-2">
+        Password
+        <input type="password" name="password" autocomplete="current-password" required>
+      </label>
+      <div class="span-2 toolbar">
+        <button type="submit">Login</button>
+        <span class="message" id="loginMessage"></span>
+      </div>
+    </form>
+  </section>
+
+  <!-- ========== PRODUCTS TAB ========== -->
+  <section class="tab-panel active" id="tab-products">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Products</h2>
+        <div class="toolbar">
+          <span class="message" id="productMessage"></span>
+          <button id="addProductBtn" type="button">+ Add Product</button>
+        </div>
+      </div>
+      <div class="panel-body">
+
+        <!-- Product Form -->
+        <div id="productFormWrap">
+          <div id="productFormInner">
+          <button type="button" id="productFormCloseBtn" title="Close">&times;</button>
+          <h3 id="productFormTitle">Add Product</h3>
+          <form id="productForm" class="form-grid" enctype="multipart/form-data">
+            <input type="hidden" name="id">
+            <input type="hidden" name="fitments" id="fitmentsInput" value="[]">
+
+            <label>
+              Part Number <span class="hint">(SKU)</span>
+              <input name="sku" placeholder="e.g. ZAG-PAD-F001">
+            </label>
+
+            <label>
+              Product Name <span class="hint">*</span>
+              <input name="name" placeholder="e.g. Sintered Front Brake Pad" required>
+            </label>
+
+            <!-- Vehicle Fitment Section -->
+            <div class="span-2" style="border:1px solid var(--line);padding:16px;background:#fafafa;">
+              <strong style="font-size:13px;text-transform:uppercase;">Vehicle Fitment</strong>
+              <span class="hint" style="display:block;margin:4px 0 10px;">Select Make > Model > Year > Engine > Position, then click Add Fitment</span>
+
+              <div class="fitment-row">
+                <label style="flex:2;">
+                  Make
+                  <div style="display:flex;gap:4px;">
+                    <select id="productMakeSelect" style="flex:1;"><option value="">-- Select Make --</option></select>
+                    <button type="button" class="secondary small" id="addMakeBtn" title="Add Make">+</button>
+                  </div>
+                </label>
+                <div class="inline-add" id="addMakeForm">
+                  <input id="newMakeName" placeholder="e.g. Honda" style="flex:1;min-height:32px;font-size:12px;">
+                  <button type="button" class="small" id="saveNewMakeBtn">Save</button>
+                  <button type="button" class="secondary small" id="cancelNewMakeBtn">X</button>
+                </div>
+
+                <label style="flex:2;">
+                  Model
+                  <div style="display:flex;gap:4px;">
+                    <select id="productModelSelect" style="flex:1;"><option value="">-- Select Model --</option></select>
+                    <button type="button" class="secondary small" id="addModelBtn" title="Add Model">+</button>
+                  </div>
+                </label>
+                <div class="inline-add" id="addModelForm">
+                  <input id="newModelName" placeholder="e.g. CBR600RR" style="flex:1;min-height:32px;font-size:12px;">
+                  <button type="button" class="small" id="saveNewModelBtn">Save</button>
+                  <button type="button" class="secondary small" id="cancelNewModelBtn">X</button>
+                </div>
+
+                <label style="flex:1;">
+                  Year
+                  <select id="productYearSelect"><option value="">-- Year --</option></select>
+                </label>
+
+                <label style="flex:1;">
+                  Engine
+                  <select id="productEngineSelect"><option value="">-- Engine --</option></select>
+                </label>
+
+                <label style="flex:1;">
+                  Position
+                  <select id="productPositionSelect">
+                    <option value="Front">Front</option>
+                    <option value="Rear">Rear</option>
+                  </select>
+                </label>
+
+                <button type="button" class="small" id="addFitmentBtn" style="align-self:flex-end;margin-bottom:2px;">+ Add</button>
+              </div>
+
+              <div class="fitment-tags" id="fitmentTags"></div>
+            </div>
+
+            <label>
+              EBC Number <span class="hint">(Cross-reference)</span>
+              <input name="ebcNumber" placeholder="e.g. FA123">
+            </label>
+
+            <label>
+              Material <span class="hint">Sintered / Semi-metallic / Ceramic / Organic</span>
+              <input name="material" placeholder="e.g. Sintered">
+            </label>
+
+            <div class="span-2">
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <label style="margin:0;">Category <span class="hint">*</span></label>
+                <div class="cat-inline">
+                  <select name="categoryId" required></select>
+                  <button type="button" class="secondary small" id="toggleCatManager">Manage</button>
+                </div>
+                <div class="cat-manager" id="catManager">
+                  <div class="form-grid" style="margin-bottom:10px;">
+                    <label>Name <input id="catNameInput" placeholder="e.g. Brake Pads"></label>
+                    <label>Slug <input id="catSlugInput" placeholder="auto-generated"></label>
+                  </div>
+                  <div class="toolbar">
+                    <button type="button" class="small" id="addCatBtn">+ Add</button>
+                    <button type="button" class="small secondary" id="closeCatManager">Close</button>
+                  </div>
+                  <div class="cat-list" id="catTagsList"></div>
+                </div>
+              </div>
+            </div>
+
+            <label>
+              Status
+              <select name="status">
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+            </label>
+
+            <label>
+              Sort Order
+              <input name="sortOrder" type="number" value="100">
+            </label>
+
+            <!-- Image Upload -->
+            <div class="span-2">
+              <label>Product Images <span class="hint">(up to 3 - click or drag to upload)</span></label>
+              <div class="upload-section" id="uploadZone">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                <p><strong>Click to browse</strong> or drag images here</p>
+                <p style="font-size:11px;">JPG, PNG, WebP - up to 5 MB each</p>
+              </div>
+              <input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden>
+              <div class="image-previews" id="imagePreviews"></div>
+            </div>
+
+            <label class="span-2">
+              Description
+              <textarea name="description" placeholder="Product description, specifications, and notes"></textarea>
+            </label>
+
+            <label class="span-2">
+              Features <span class="hint">(one per line)</span>
+              <textarea name="features" placeholder="Low noise formula&#10;High heat resistance&#10;Stable friction coefficient"></textarea>
+            </label>
+
+            <div class="span-2">
+              <div class="save-bar">
+                <span class="msg" id="saveMsg">Ready</span>
+                <div class="toolbar">
+                  <button type="button" class="secondary" id="cancelProductBtn">Cancel</button>
+                  <button type="submit">Save Product</button>
+                </div>
+              </div>
+            </div>
+          </form>
+          </div>
+        </div>
+
+        <!-- Product Table -->
+        <table>
+          <thead><tr><th>Image</th><th>Part #</th><th>Name</th><th>Fitment</th><th>EBC #</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="productRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CATEGORIES TAB ========== -->
+  <section class="tab-panel" id="tab-categories">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Category Manager</h2>
+        <span class="message" id="categoryMessage"></span>
+      </div>
+      <div class="panel-body">
+        <form id="categoryForm" class="form-grid">
+          <input type="hidden" name="id">
+          <label>
+            Category Name
+            <input name="name" placeholder="e.g. Brake Pads" required>
+          </label>
+          <label>
+            URL Slug
+            <input name="slug" placeholder="e.g. brake-pads">
+          </label>
+          <label>
+            Sort Order
+            <input name="sortOrder" type="number" value="100">
+          </label>
+          <label class="span-2">
+            Description
+            <textarea name="description" placeholder="Short description"></textarea>
+          </label>
+          <div class="span-2 toolbar">
+            <button type="submit">Save Category</button>
+            <button type="button" class="secondary" id="resetCategoryBtn">Clear</button>
+          </div>
+        </form>
+
+        <table style="margin-top:16px;">
+          <thead><tr><th>Name</th><th>Slug</th><th>Product Count</th><th>Actions</th></tr></thead>
+          <tbody id="categoryRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  var tokenKey = "zagAdminToken";
+
+  // ===== DOM refs =====
+  var loginPanel = document.getElementById("loginPanel");
+  var adminTabs = document.getElementById("adminTabs");
+  var logoutBtn = document.getElementById("logoutBtn");
+
+  // Product tab
+  var productForm = document.getElementById("productForm");
+  var productFormWrap = document.getElementById("productFormWrap");
+  var productFormTitle = document.getElementById("productFormTitle");
+  var productRows = document.getElementById("productRows");
+  var categorySelect = productForm.querySelector("[name=categoryId]");
+  var productMessage = document.getElementById("productMessage");
+
+  // Image upload
+  var uploadZone = document.getElementById("uploadZone");
+  var imageInput = document.getElementById("imageInput");
+  var imagePreviews = document.getElementById("imagePreviews");
+  var pendingImages = [];
+  var existingImages = [];
+  var removedExisting = [];
+
+  // Category manager
+  var catManager = document.getElementById("catManager");
+  var catTagsList = document.getElementById("catTagsList");
+  var catNameInput = document.getElementById("catNameInput");
+  var catSlugInput = document.getElementById("catSlugInput");
+
+  // Category tab
+  var categoryForm = document.getElementById("categoryForm");
+  var categoryRows = document.getElementById("categoryRows");
+
+  // Vehicle fitment
+  var fitmentsInput = document.getElementById("fitmentsInput");
+  var fitmentTags = document.getElementById("fitmentTags");
+  var pendingFitments = [];
+
+  // ===== State =====
+  var catalog = { categories: [], products: [] };
+  var allMakes = [];
+  var allModels = [];
+  var MAX_IMAGES = 3;
+
+  // ===== Helpers =====
+  function token() { return localStorage.getItem(tokenKey); }
+  function esc(v) {
+    return String(v || "").replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function msg(el, text, cls) {
+    el.textContent = text;
+    el.className = "message " + (cls || "");
+    if (text) setTimeout(function () { el.textContent = ""; el.className = "message"; }, 4000);
+  }
+
+  async function api(path, options) {
+    options = options || {};
+    var headers = options.headers || {};
+    var bodyIsForm = options.body instanceof FormData;
+    if (!bodyIsForm && options.body) headers["Content-Type"] = "application/json";
+    if (token()) headers.Authorization = "Bearer " + token();
+    var resp = await fetch(path, { method: options.method || "GET", headers: headers, body: options.body });
+    var data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || "Request failed");
+    return data;
+  }
+
+  function showAdmin() {
+    loginPanel.classList.add("hidden");
+    adminTabs.classList.remove("hidden");
+    logoutBtn.classList.remove("hidden");
+    document.getElementById("tab-products").classList.add("active");
+    document.getElementById("tab-categories").classList.remove("active");
+  }
+
+  function showLogin() {
+    loginPanel.classList.remove("hidden");
+    adminTabs.classList.add("hidden");
+    logoutBtn.classList.add("hidden");
+    document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); }); document.getElementById("csvPreview").style.display = "none"; csvRows = [];
+    productFormWrap.classList.remove("visible");
+  }
+
+  // ===== Tab switching =====
+  adminTabs.addEventListener("click", function (e) {
+    var tab = e.target.closest(".tab");
+    if (!tab) return;
+    var tabName = tab.dataset.tab;
+    document.querySelectorAll(".tab").forEach(function (t) { t.classList.toggle("active", t === tab); });
+    document.getElementById("tab-products").classList.toggle("active", tabName === "products");
+    document.getElementById("tab-categories").classList.toggle("active", tabName === "categories");
+    document.getElementById("tab-import").classList.toggle("active", tabName === "import");
+  });
+
+  // ===== Login =====
+  document.getElementById("loginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var btn = e.target.querySelector("button[type=submit]");
+    btn.disabled = true;
+    btn.textContent = "Logging in...";
+    try {
+      var data = await api("/api/login", {
+        method: "POST",
+        body: JSON.stringify({
+          username: e.target.elements.username.value,
+          password: e.target.elements.password.value
+        })
+      });
+      localStorage.setItem(tokenKey, data.token);
+      showAdmin();
+      await loadCatalog();
+      msg(document.getElementById("loginMessage"), "", "");
+    } catch (err) {
+      msg(document.getElementById("loginMessage"), err.message, "error");
+      btn.disabled = false;
+      btn.textContent = "Login";
+    }
+  });
+
+  logoutBtn.addEventListener("click", function () {
+    localStorage.removeItem(tokenKey);
+    showLogin();
+  });
+
+  // ===== Load catalog =====
+  async function loadCatalog() {
+    try {
+      catalog = await api("/api/admin/catalog");
+    } catch (err) {
+      // If token expired, go back to login
+      localStorage.removeItem(tokenKey);
+      showLogin();
+      return;
+    }
+    renderCategorySelect();
+    renderProducts();
+    renderCategories();
+    renderCatTags();
+    await loadMakes();
+  }
+
+  function categoryMap() {
+    return new Map(catalog.categories.map(function (c) { return [c.id, c]; }));
+  }
+
+  function renderCategorySelect() {
+    categorySelect.innerHTML = catalog.categories.map(function (c) {
+      return "<option value=\"" + esc(c.id) + "\">" + esc(c.name) + "</option>";
+    }).join("");
+  }
+
+  // ===== Vehicle cascading dropdowns =====
+  async function loadMakes() {
+    try {
+      var resp = await fetch("/api/admin/vehicles/makes", { headers: { Authorization: "Bearer " + token() } });
+      allMakes = await resp.json();
+      renderMakeSelect();
+    } catch (_) { allMakes = []; renderMakeSelect(); }
+  }
+
+  function renderMakeSelect() {
+    var sel = document.getElementById("productMakeSelect");
+    sel.innerHTML = '<option value="">-- Select Make --</option>';
+    allMakes.forEach(function (m) {
+      var name = typeof m.name === "object" ? (m.name.en || Object.values(m.name)[0]) : String(m.name);
+      sel.innerHTML += '<option value="' + esc(m.id) + '">' + esc(name) + '</option>';
+    });
+  }
+
+  async function loadModelsForMake(makeId) {
+    var sel = document.getElementById("productModelSelect");
+    var yearSel = document.getElementById("productYearSelect");
+    var engineSel = document.getElementById("productEngineSelect");
+    sel.innerHTML = '<option value="">-- Select Model --</option>';
+    yearSel.innerHTML = '<option value="">-- Year --</option>';
+    engineSel.innerHTML = '<option value="">-- Engine --</option>';
+    engineSel.value = "";
+    allModels = [];
+    if (!makeId) return;
+    try {
+      var resp = await fetch("/api/admin/vehicles/models?makeId=" + makeId, { headers: { Authorization: "Bearer " + token() } });
+      allModels = await resp.json();
+      allModels.forEach(function (m) {
+        var name = typeof m.name === "object" ? (m.name.en || Object.values(m.name)[0]) : String(m.name);
+        sel.innerHTML += '<option value="' + esc(m.id) + '">' + esc(name) + '</option>';
+      });
+    } catch (_) {}
+  }
+
+  var ALL_YEARS = (function () {
+    var yrs = []; var thisYear = new Date().getFullYear();
+    for (var y = thisYear; y >= 1900; y--) yrs.push(y);
+    return yrs;
+  })();
+
+  var ALL_ENGINES = ['50cc','70cc','90cc','100cc','110cc','125cc','150cc','175cc','200cc','250cc','300cc','350cc','400cc','450cc','500cc','550cc','600cc','650cc','700cc','750cc','800cc','900cc','1000cc','1100cc','1200cc','1300cc','1400cc','1500cc','1600cc','1800cc','2000cc','2300cc','2500cc'];
+
+  function fillYearDropdown() {
+    var sel = document.getElementById('productYearSelect');
+    sel.innerHTML = '<option value="">-- Year --</option>';
+    ALL_YEARS.forEach(function(y) { sel.innerHTML += '<option value="year_'+y+'">'+y+'</option>'; });
+  }
+
+  function fillEngineDropdown() {
+    var sel = document.getElementById('productEngineSelect');
+    sel.innerHTML = '<option value="">-- Engine --</option>';
+    ALL_ENGINES.forEach(function(e) { sel.innerHTML += '<option value="eng_'+e+'">'+e+'</option>'; });
+  }
+
+  async function loadYearsForModel(modelId) {
+    fillYearDropdown();
+    fillEngineDropdown();
+  }
+
+  async function loadEnginesForYear(yearId) {
+    // Pre-built list already populated
+  }
+
+  // Make change -> load models
+  document.getElementById("productMakeSelect").addEventListener("change", function () {
+    loadModelsForMake(this.value); fillYearDropdown(); fillEngineDropdown();
+  });
+
+  // Model change -> load years
+  document.getElementById("productModelSelect").addEventListener("change", function () {
+    loadYearsForModel(this.value);
+  });
+
+  // Year change -> load engines
+  document.getElementById("productYearSelect").addEventListener("change", function () {
+    fillEngineDropdown();
+  });
+
+  // ===== Inline Make Add =====
+  document.getElementById("addMakeBtn").addEventListener("click", function () {
+    document.getElementById("addMakeForm").classList.add("visible");
+  });
+  document.getElementById("cancelNewMakeBtn").addEventListener("click", function () {
+    document.getElementById("addMakeForm").classList.remove("visible");
+    document.getElementById("newMakeName").value = "";
+  });
+  document.getElementById("saveNewMakeBtn").addEventListener("click", async function () {
+    var name = document.getElementById("newMakeName").value.trim();
+    if (!name) return;
+    try {
+      var resp = await fetch("/api/admin/vehicles/makes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token() },
+        body: JSON.stringify({ name: { en: name }, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-") })
+      });
+      var newMake = await resp.json();
+      document.getElementById("addMakeForm").classList.remove("visible");
+      document.getElementById("newMakeName").value = "";
+      await loadMakes();
+      document.getElementById("productMakeSelect").value = newMake.id;
+      loadModelsForMake(newMake.id);
+    } catch (err) { alert("Failed to add make: " + err.message); }
+  });
+
+  // ===== Inline Model Add =====
+  document.getElementById("addModelBtn").addEventListener("click", function () {
+    var makeId = document.getElementById("productMakeSelect").value;
+    if (!makeId) { alert("Select a Make first"); return; }
+    document.getElementById("addModelForm").classList.add("visible");
+  });
+  document.getElementById("cancelNewModelBtn").addEventListener("click", function () {
+    document.getElementById("addModelForm").classList.remove("visible");
+    document.getElementById("newModelName").value = "";
+  });
+  document.getElementById("saveNewModelBtn").addEventListener("click", async function () {
+    var name = document.getElementById("newModelName").value.trim();
+    var makeId = document.getElementById("productMakeSelect").value;
+    if (!name || !makeId) return;
+    try {
+      var resp = await fetch("/api/admin/vehicles/models", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token() },
+        body: JSON.stringify({ makeId: makeId, name: { en: name }, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-") })
+      });
+      var newModel = await resp.json();
+      document.getElementById("addModelForm").classList.remove("visible");
+      document.getElementById("newModelName").value = "";
+      await loadModelsForMake(makeId);
+      document.getElementById("productModelSelect").value = newModel.id;
+      loadYearsForModel(newModel.id);
+    } catch (err) { alert("Failed to add model: " + err.message); }
+  });
+
+  // ===== Add Fitment =====
+  document.getElementById("addFitmentBtn").addEventListener("click", function () {
+    var engineSel = document.getElementById("productEngineSelect");
+    var posSel = document.getElementById("productPositionSelect");
+    var engineId = engineSel.value;
+    var position = posSel.value;
+
+    if (!engineId || engineId === "__new__") {
+      alert("Please select a valid Engine Size first");
+      return;
+    }
+
+    // Get display names
+    var makeName = document.getElementById("productMakeSelect").selectedOptions[0] ? document.getElementById("productMakeSelect").selectedOptions[0].textContent : "";
+    var modelName = document.getElementById("productModelSelect").selectedOptions[0] ? document.getElementById("productModelSelect").selectedOptions[0].textContent : "";
+    var yearName = document.getElementById("productYearSelect").selectedOptions[0] ? document.getElementById("productYearSelect").selectedOptions[0].textContent : "";
+    var engineName = engineSel.selectedOptions[0] ? engineSel.selectedOptions[0].textContent : "";
+
+    // Check if already added
+    var dup = pendingFitments.find(function (f) {
+      return f.engineSizeId === engineId && f.position === position;
+    });
+    if (dup) { alert("This fitment is already added"); return; }
+
+    pendingFitments.push({
+      engineSizeId: engineId,
+      position: position,
+      label: makeName + " " + modelName + " " + yearName + " " + engineName + " [" + position + "]"
+    });
+
+    renderFitmentTags();
+  });
+
+  function renderFitmentTags() {
+    fitmentTags.innerHTML = pendingFitments.map(function (f, i) {
+      return '<span class="fitment-tag">' +
+        esc(f.label) +
+        '<span class="fitment-del" data-fitment-index="' + i + '" title="Remove">&times;</span>' +
+        '</span>';
+    }).join("");
+  }
+
+  fitmentTags.addEventListener("click", function (e) {
+    var del = e.target.closest(".fitment-del");
+    if (!del) return;
+    var idx = parseInt(del.dataset.fitmentIndex);
+    pendingFitments.splice(idx, 1);
+    renderFitmentTags();
+  });
+
+  // ===== Products Table =====
+  function renderProducts() {
+    var catMap = categoryMap();
+    productRows.innerHTML = catalog.products.map(function (p) {
+      var images = p.images || [];
+      var imgHtml = images.length
+        ? "<div class=\"thumbs\">" + images.map(function (src) {
+            return "<img class=\"thumb\" src=\"" + esc(src) + "\" alt=\"\">";
+          }).join("") + "</div>"
+        : "<span class=\"muted\">--</span>";
+      var cat = catMap.get(p.categoryId);
+      var brand = p.brand || "--";
+      var fitment = p.fitmentSummary || p.vehicleModels || "--";
+      var ebcNum = p.ebcNumber || "--";
+      return "<tr>" +
+        "<td data-label=\"Image\">" + imgHtml + "</td>" +
+        "<td data-label=\"Part #\">" + esc(p.sku) + "</td>" +
+        "<td data-label=\"Name\">" + esc(p.name) + "</td>" +
+        "<td data-label=\"Fitment\">" + esc(fitment) + "</td>" +
+        "<td data-label=\"EBC #\">" + esc(ebcNum) + "</td>" +
+        "<td data-label=\"Category\">" + esc(cat ? cat.name : "--") + "</td>" +
+        "<td data-label=\"Status\">" + esc(p.status) + "</td>" +
+        "<td data-label=\"Actions\"><div class=\"toolbar\">" +
+        "<button class=\"secondary small\" type=\"button\" data-edit-product=\"" + esc(p.id) + "\">Edit</button>" +
+        "<button class=\"danger small\" type=\"button\" data-delete-product=\"" + esc(p.id) + "\">Del</button>" +
+        "</div></td></tr>";
+    }).join("");
+  }
+
+  // ===== Product form handlers =====
+  function showProductForm(isEdit) {
+    productFormTitle.textContent = isEdit ? "Edit Product" : "Add Product";
+    if (!isEdit) {
+      productForm.reset();
+      resetImages();
+      pendingFitments = [];
+      renderFitmentTags();
+      document.querySelector("#productForm [name=id]").value = "";
+      document.querySelector("#productForm [name=status]").value = "published";
+      document.querySelector("#productForm [name=sortOrder]").value = "100";
+      document.getElementById("productMakeSelect").value = "";
+      document.getElementById("productModelSelect").innerHTML = '<option value="">-- Select Model --</option>';
+      document.getElementById("productYearSelect").innerHTML = '<option value="">-- Year --</option>';
+      document.getElementById("productEngineSelect").innerHTML = '<option value="">-- Engine --</option>';
+    }
+    productFormWrap.classList.add("visible");
+    document.getElementById("saveMsg").textContent = isEdit ? "Editing existing product" : "Fill in details and save";
+    // Modal is fixed-position, no scroll needed
+  }
+
+  function hideProductForm() {
+    productFormWrap.classList.remove("visible");
+    productForm.reset();
+    resetImages();
+    pendingFitments = [];
+    renderFitmentTags();
+  }
+
+  // ===== Image handling =====
+  function resetImages() {
+    pendingImages = [];
+    existingImages = [];
+    removedExisting = [];
+    imageInput.value = "";
+    renderImagePreviews();
+  }
+
+  function renderImagePreviews() {
+    imagePreviews.innerHTML = "";
+    existingImages.forEach(function (url, i) {
+      if (removedExisting.indexOf(i) !== -1) return;
+      var div = document.createElement("div");
+      div.className = "image-preview";
+      div.innerHTML = "<img src=\"" + esc(url) + "?t=" + Date.now() + "\" alt=\"\"><button class=\"remove-img\" data-existing=\"" + i + "\">&times;</button><span class=\"img-label\">Existing " + (i + 1) + "</span>";
+      imagePreviews.appendChild(div);
+    });
+    pendingImages.forEach(function (img, i) {
+      var div = document.createElement("div");
+      div.className = "image-preview";
+      div.innerHTML = "<img src=\"" + img.dataUrl + "\" alt=\"\"><button class=\"remove-img\" data-pending=\"" + i + "\">&times;</button><span class=\"img-label\">New " + (existingImages.filter(function (_, j) { return removedExisting.indexOf(j) === -1; }).length + i + 1) + "</span>";
+      imagePreviews.appendChild(div);
+    });
+    var totalVisible = existingImages.filter(function (_, i) { return removedExisting.indexOf(i) === -1; }).length + pendingImages.length;
+    uploadZone.style.display = totalVisible >= MAX_IMAGES ? "none" : "";
+  }
+
+  uploadZone.addEventListener("click", function () { imageInput.click(); });
+  imageInput.addEventListener("change", function () {
+    addFiles(Array.from(imageInput.files));
+    imageInput.value = "";
+  });
+  uploadZone.addEventListener("dragover", function (e) { e.preventDefault(); uploadZone.classList.add("drag-over"); });
+  uploadZone.addEventListener("dragleave", function () { uploadZone.classList.remove("drag-over"); });
+  uploadZone.addEventListener("drop", function (e) {
+    e.preventDefault();
+    uploadZone.classList.remove("drag-over");
+    addFiles(Array.from(e.dataTransfer.files));
+  });
+
+  function addFiles(files) {
+    var remaining = MAX_IMAGES - (existingImages.filter(function (_, i) { return removedExisting.indexOf(i) === -1; }).length + pendingImages.length);
+    files = files.filter(function (f) { return f.type.startsWith("image/"); }).slice(0, remaining);
+    files.forEach(function (file) {
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        pendingImages.push({ file: file, dataUrl: ev.target.result });
+        renderImagePreviews();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Paste image support (Ctrl+V)
+  productForm.addEventListener("paste", function (e) {
+    var items = (e.clipboardData || window.clipboardData).items;
+    if (!items) return;
+    var pastedFiles = [];
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        var blob = items[i].getAsFile();
+        if (blob) {
+          var ext = blob.type.split("/")[1] || "png";
+          var renamedFile = new File([blob], "pasted-" + Date.now() + "." + ext, { type: blob.type });
+          pastedFiles.push(renamedFile);
+        }
+      }
+    }
+    if (pastedFiles.length > 0) {
+      e.preventDefault();
+      addFiles(pastedFiles);
+    }
+  });
+
+  imagePreviews.addEventListener("click", function (e) {
+    var btn = e.target.closest(".remove-img");
+    if (!btn) return;
+    e.preventDefault();
+    if (btn.dataset.existing !== undefined) {
+      removedExisting.push(parseInt(btn.dataset.existing));
+    }
+    if (btn.dataset.pending !== undefined) {
+      pendingImages.splice(parseInt(btn.dataset.pending), 1);
+    }
+    renderImagePreviews();
+  });
+
+  // Add product button
+  document.getElementById("addProductBtn").addEventListener("click", function () {
+    resetImages();
+    pendingFitments = [];
+    renderFitmentTags();
+    showProductForm(false);
+  });
+
+  // Cancel button
+  document.getElementById("cancelProductBtn").addEventListener("click", function () {
+    if (confirm("Discard unsaved changes?")) hideProductForm();
+  });
+  // Close (X) button
+  document.getElementById("productFormCloseBtn").addEventListener("click", function () {
+    if (confirm("Discard unsaved changes?")) hideProductForm();
+  });
+  // Click outside modal to close
+  document.getElementById("productFormWrap").addEventListener("click", function (e) {
+    if (e.target.id === "productFormWrap") {
+      if (confirm("Discard unsaved changes?")) hideProductForm();
+    }
+  });
+
+  // Save product
+  productForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var fd = new FormData(productForm);
+    var id = fd.get("id");
+    fd.delete("id");
+
+    // Add fitments as JSON
+    fd.set("fitments", JSON.stringify(pendingFitments));
+    fd.set("ebcNumber", fd.get("ebcNumber") || "");
+
+    // Append new images
+    var finalExisting = existingImages.filter(function (_, i) { return removedExisting.indexOf(i) === -1; });
+    pendingImages.forEach(function (img, i) {
+      fd.append("image" + (finalExisting.length + i), img.file, img.file.name);
+    });
+    removedExisting.forEach(function (i) {
+      fd.append("removeImage" + i, "1");
+    });
+
+    try {
+      var result = await api(id ? "/api/admin/products/" + id : "/api/admin/products", {
+        method: id ? "PUT" : "POST",
+        body: fd
+      });
+      hideProductForm();
+      await loadCatalog();
+      alert(id ? "✓ Product updated successfully!" : "✓ Product added successfully!");
+    } catch (err) {
+      msg(productMessage, err.message, "error");
+    }
+  });
+
+  // Edit / Delete from table
+  productRows.addEventListener("click", async function (e) {
+    var editBtn = e.target.closest("[data-edit-product]");
+    var delBtn = e.target.closest("[data-delete-product]");
+    if (editBtn) {
+      var editId = editBtn.dataset.editProduct;
+      var product = catalog.products.find(function (p) { return p.id === editId; });
+      if (product) {
+        resetImages();
+        existingImages = (product.images || []).slice();
+        pendingFitments = [];
+        renderFitmentTags();
+        Object.keys(product).forEach(function (key) {
+          if (!productForm.elements[key] || key === "images" || key === "image" || key === "id") return;
+          productForm.elements[key].value = Array.isArray(product[key]) ? product[key].join("\n") : (product[key] || "");
+        });
+        productForm.querySelector("[name=id]").value = product.id;
+
+        // 加载完整数据：EBC号码 + Features/APPLICATION
+        try {
+          var fResp = await fetch("/api/admin/products/" + editId, { headers: { Authorization: "Bearer " + token() } });
+          var fullProduct = await fResp.json();
+
+          // 回填EBC号码
+          if (fullProduct.crossRefs && fullProduct.crossRefs.length > 0) {
+            var ebcRef = fullProduct.crossRefs.find(function(r) { return r.ref_type === "EBC"; });
+            if (ebcRef && productForm.elements["ebcNumber"]) {
+              productForm.elements["ebcNumber"].value = ebcRef.ref_number || "";
+            }
+          }
+
+          // 回填Features（优先用specifications.features，没有则从vehicles生成）
+          var specs = fullProduct.specifications;
+          if (typeof specs === "string") { try { specs = JSON.parse(specs); } catch(e) { specs = {}; } }
+          var featEl = productForm.elements["features"];
+          if (featEl) {
+            if (specs && specs.features && Array.isArray(specs.features) && specs.features.length > 0) {
+              featEl.value = specs.features.join("\n");
+            } else if (fullProduct.vehicles && fullProduct.vehicles.length > 0) {
+              featEl.value = fullProduct.vehicles.map(function(v) {
+                var mk = v.make_name ? (JSON.parse(v.make_name).en || v.make_name) : "";
+                var md = v.model_name ? (JSON.parse(v.model_name).en || v.model_name) : "";
+                return (mk + " " + md + " " + (v.position||"F") + " " + (v.year||"")).trim();
+              }).join("\n");
+            }
+          }
+        } catch(fe) { console.error("Failed to load full product data:", fe); }
+
+        renderImagePreviews();
+        showProductForm(true);
+      }
+    }
+    if (delBtn && confirm("Delete this product permanently?")) {
+      try {
+        await api("/api/admin/products/" + delBtn.dataset.deleteProduct, { method: "DELETE" });
+        await loadCatalog();
+        msg(productMessage, "Product deleted", "success");
+      } catch (err) { msg(productMessage, err.message, "error"); }
+    }
+  });
+
+  // ===== Inline Category Manager =====
+  document.getElementById("toggleCatManager").addEventListener("click", function () {
+    catManager.classList.toggle("open");
+    renderCatTags();
+  });
+
+  document.getElementById("closeCatManager").addEventListener("click", function () {
+    catManager.classList.remove("open");
+  });
+
+  function renderCatTags() {
+    catTagsList.innerHTML = catalog.categories.map(function (c, i) {
+      return "<span class=\"cat-tag\">" +
+        "<span>" + esc(c.name) + "</span>" +
+        "<span class=\"cat-del\" data-cat-index=\"" + i + "\" title=\"Delete\">&times;</span>" +
+        "</span>";
+    }).join("");
+  }
+
+  catTagsList.addEventListener("click", async function (e) {
+    var del = e.target.closest(".cat-del");
+    if (!del) return;
+    var idx = parseInt(del.dataset.catIndex);
+    var cat = catalog.categories[idx];
+    if (!cat) return;
+    if (!confirm("Delete category \"" + cat.name + "\"? Products in this category will become uncategorized.")) return;
+    try {
+      await api("/api/admin/categories/" + cat.id, { method: "DELETE" });
+      await loadCatalog();
+      msg(productMessage, "Category deleted", "success");
+    } catch (err) { msg(productMessage, err.message, "error"); }
+  });
+
+  document.getElementById("addCatBtn").addEventListener("click", async function () {
+    var name = catNameInput.value.trim();
+    if (!name) return;
+    try {
+      await api("/api/admin/categories", {
+        method: "POST",
+        body: JSON.stringify({
+          name: name,
+          slug: catSlugInput.value.trim() || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+          sortOrder: 100
+        })
+      });
+      catNameInput.value = "";
+      catSlugInput.value = "";
+      await loadCatalog();
+      msg(productMessage, "Category added", "success");
+    } catch (err) { msg(productMessage, err.message, "error"); }
+  });
+
+  // ===== Categories tab =====
+  function renderCategories() {
+    var counts = {};
+    catalog.products.forEach(function (p) {
+      counts[p.categoryId] = (counts[p.categoryId] || 0) + 1;
+    });
+    categoryRows.innerHTML = catalog.categories.map(function (c) {
+      return "<tr>" +
+        "<td data-label=\"Name\">" + esc(c.name) + "</td>" +
+        "<td data-label=\"Slug\">" + esc(c.slug) + "</td>" +
+        "<td data-label=\"Products\">" + (counts[c.id] || 0) + "</td>" +
+        "<td data-label=\"Actions\"><div class=\"toolbar\">" +
+        "<button class=\"secondary small\" type=\"button\" data-edit-category=\"" + esc(c.id) + "\">Edit</button>" +
+        "<button class=\"danger small\" type=\"button\" data-delete-category=\"" + esc(c.id) + "\">Del</button>" +
+        "</div></td></tr>";
+    }).join("");
+  }
+
+  categoryForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var fd = new FormData(categoryForm);
+    var vals = {}; fd.forEach(function (v, k) { vals[k] = v; });
+    var id = vals.id; delete vals.id;
+    try {
+      await api(id ? "/api/admin/categories/" + id : "/api/admin/categories", {
+        method: id ? "PUT" : "POST",
+        body: JSON.stringify(vals)
+      });
+      categoryForm.reset();
+      await loadCatalog();
+      msg(document.getElementById("categoryMessage"), "Category saved", "success");
+    } catch (err) { msg(document.getElementById("categoryMessage"), err.message, "error"); }
+  });
+
+  document.getElementById("resetCategoryBtn").addEventListener("click", function () { categoryForm.reset(); });
+
+  categoryRows.addEventListener("click", async function (e) {
+    var editBtn = e.target.closest("[data-edit-category]");
+    var delBtn = e.target.closest("[data-delete-category]");
+    if (editBtn) {
+      var cat = catalog.categories.find(function (c) { return c.id === editBtn.dataset.editCategory; });
+      if (cat) {
+        Object.keys(cat).forEach(function (k) {
+          if (categoryForm.elements[k]) categoryForm.elements[k].value = cat[k] || "";
+        });
+      }
+    }
+    if (delBtn && confirm("Delete this category?")) {
+      try {
+        await api("/api/admin/categories/" + delBtn.dataset.deleteCategory, { method: "DELETE" });
+        await loadCatalog();
+        msg(document.getElementById("categoryMessage"), "Category deleted", "success");
+      } catch (err) { msg(document.getElementById("categoryMessage"), err.message, "error"); }
+    }
+  });
+
+  // ===== CSV Import =====
+  var csvRows = [];
+
+  document.getElementById("csvUploadZone").addEventListener("click", function () {
+    document.getElementById("csvFileInput").click();
+  });
+  document.getElementById("csvUploadZone").addEventListener("dragover", function (e) { e.preventDefault(); });
+  document.getElementById("csvUploadZone").addEventListener("drop", function (e) {
+    e.preventDefault();
+    var file = e.dataTransfer.files[0];
+    if (file) parseCSV(file);
+  });
+  document.getElementById("csvFileInput").addEventListener("change", function () {
+    if (this.files[0]) parseCSV(this.files[0]);
+    this.value = "";
+  });
+
+  function parseCSV(file) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var text = e.target.result;
+      // Remove BOM
+      if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+      var lines = text.split(/\r?\n/).filter(function (l) { return l.trim(); });
+      if (lines.length < 2) { alert("CSV must have a header row + data rows"); return; }
+      
+      // Parse header
+      var headers = parseCSVLine(lines[0]);
+      csvRows = [];
+      for (var i = 1; i < lines.length; i++) {
+        var vals = parseCSVLine(lines[i]);
+        var row = {};
+        headers.forEach(function (h, j) { row[h] = vals[j] || ""; });
+        csvRows.push(row);
+      }
+      renderCSVPreview(headers);
+    };
+    reader.readAsText(file, "UTF-8");
+  }
+
+  function parseCSVLine(line) {
+    var result = [];
+    var current = "";
+    var inQuotes = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (inQuotes) {
+        if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+        else if (ch === '"') { inQuotes = false; }
+        else { current += ch; }
+      } else {
+        if (ch === '"') { inQuotes = true; }
+        else if (ch === ',') { result.push(current.trim()); current = ""; }
+        else { current += ch; }
+      }
+    }
+    result.push(current.trim());
+    return result;
+  }
+
+  function renderCSVPreview(headers) {
+    document.getElementById("csvPreview").style.display = "block";
+    document.getElementById("csvRowCount").textContent = csvRows.length + " row(s) ready to import";
+    
+    var html = "<thead><tr>";
+    headers.forEach(function (h) { html += "<th>" + esc(h) + "</th>"; });
+    html += "</tr></thead><tbody>";
+    
+    var preview = csvRows.slice(0, 10);
+    preview.forEach(function (row) {
+      html += "<tr>";
+      headers.forEach(function (h) { html += "<td>" + esc(row[h] || "") + "</td>"; });
+      html += "</tr>";
+    });
+    
+    if (csvRows.length > 10) html += "<tr><td colspan=\"" + headers.length + "\" style=\"text-align:center;color:#888;\">... and " + (csvRows.length - 10) + " more rows</td></tr>";
+    html += "</tbody>";
+    document.getElementById("csvPreviewTable").innerHTML = html;
+  }
+
+  document.getElementById("csvClearBtn").addEventListener("click", function () {
+    csvRows = [];
+    document.getElementById("csvPreview").style.display = "none";
+    document.getElementById("importResults").innerHTML = "";
+  });
+
+  document.getElementById("csvImportBtn").addEventListener("click", async function () {
+    if (csvRows.length === 0) return;
+    var btn = document.getElementById("csvImportBtn");
+    btn.disabled = true;
+    btn.textContent = "Importing...";
+    try {
+      var result = await api("/api/admin/import", {
+        method: "POST",
+        body: JSON.stringify({ rows: csvRows })
+      });
+      var html = '<div class="message success">Imported: ' + result.created + ' | Skipped: ' + result.skipped;
+      if (result.errors.length > 0) {
+        html += ' | Errors: ' + result.errors.length;
+        html += '<ul style="margin-top:8px;">';
+        result.errors.forEach(function (e) { html += '<li style="font-size:12px;color:#c00;">' + esc(e.row) + ': ' + esc(e.error) + '</li>'; });
+        html += '</ul>';
+      }
+      html += '</div>';
+      document.getElementById("importResults").innerHTML = html;
+      if (result.created > 0) { await loadCatalog(); }
+    } catch (err) {
+      msg(document.getElementById("importMessage"), err.message, "error");
+    }
+    btn.disabled = false;
+    btn.textContent = "Import All";
+  });
+
+  // Download template
+  document.getElementById("downloadTemplateBtn").addEventListener("click", function () {
+    var csv = "SKU,Name,Category,Material,Make,Model,Year,Engine,Position,EBC Number,Description,Features\n";
+    csv += "ZAG-PAD-001,Front Brake Pad,Brake Pads,Sintered,Honda,CBR600RR,2024,600cc,Front,FA123,\"High performance sintered pad\",\"Low noise|High heat resistance\"";
+    var blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "zag-import-template.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // Export CSV
+  document.getElementById("exportCsvBtn").addEventListener("click", function () {
+    window.open("/api/admin/export-csv?token=" + encodeURIComponent(token()), "_blank");
+  });
+
+
+  // ===== Init =====
+  if (token()) {
+    // Security: verify token on server before showing admin UI
+    api("/api/admin/dashboard").then(function () {
+      showAdmin();
+      loadCatalog().catch(function (err) {
+        console.error("Catalog load failed:", err);
+      });
+    }).catch(function () {
+      localStorage.removeItem(tokenKey);
+      showLogin();
+    });
+  } else {
+    showLogin();
+  }
+})();
+</script>
+</body>
+</html>
+
+
+
+<style>
+    /* 保持表格对齐 */
+    table { width: 100% !important; table-layout: fixed !important; border-collapse: collapse !important; }
+    th, td { text-align: left !important; padding: 12px 8px !important; vertical-align: middle !important; word-wrap: break-word !important; }
+    th:nth-child(1), td:nth-child(1) { width: 80px !important; }
+    th:nth-child(8), td:nth-child(8) { width: 120px !important; }
+</style>
+<script>
+// 1. 唤醒 ADD PRODUCT 和 EDIT 弹窗
+document.addEventListener("click", function(e) {
+    var el = e.target.closest("button") || e.target.closest("a") || e.target;
+    var action = (el.innerText || "").trim().toUpperCase();
+    if (action.includes("ADD PRODUCT") || action === "EDIT") {
+        var wrap = document.getElementById("productFormWrap");
+        if (wrap) {
+            wrap.style.display = "flex";
+            wrap.classList.remove("hidden");
+        }
+    }
+});
+
+// 2. 接通顶部栏目切换与登出按钮 (延时确保原文档加载完毕)
+setTimeout(function() {
+    // 绑定 Categories / Import
+    document.querySelectorAll(".tab").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            if (typeof switchTab === "function") switchTab(this);
+        });
+    });
+
+    // 绑定 Logout (直接清空缓存并刷新回退)
+    var btnLogout = document.getElementById("logoutBtn");
+    if (btnLogout) {
+        btnLogout.onclick = function(e) {
+            e.preventDefault();
+            localStorage.clear(); 
+            window.location.reload(); 
+        };
+    }
+}, 500);
+</script>
+
+</body>
+</html>

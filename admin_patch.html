@@ -1,0 +1,47 @@
+
+
+
+<style>
+    /* 保持表格对齐 */
+    table { width: 100% !important; table-layout: fixed !important; border-collapse: collapse !important; }
+    th, td { text-align: left !important; padding: 12px 8px !important; vertical-align: middle !important; word-wrap: break-word !important; }
+    th:nth-child(1), td:nth-child(1) { width: 80px !important; }
+    th:nth-child(8), td:nth-child(8) { width: 120px !important; }
+</style>
+<script>
+// 1. 唤醒 ADD PRODUCT 和 EDIT 弹窗
+document.addEventListener("click", function(e) {
+    var el = e.target.closest("button") || e.target.closest("a") || e.target;
+    var action = (el.innerText || "").trim().toUpperCase();
+    if (action.includes("ADD PRODUCT") || action === "EDIT") {
+        var wrap = document.getElementById("productFormWrap");
+        if (wrap) {
+            wrap.style.display = "flex";
+            wrap.classList.remove("hidden");
+        }
+    }
+});
+
+// 2. 接通顶部栏目切换与登出按钮 (延时确保原文档加载完毕)
+setTimeout(function() {
+    // 绑定 Categories / Import
+    document.querySelectorAll(".tab").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            if (typeof switchTab === "function") switchTab(this);
+        });
+    });
+
+    // 绑定 Logout (直接清空缓存并刷新回退)
+    var btnLogout = document.getElementById("logoutBtn");
+    if (btnLogout) {
+        btnLogout.onclick = function(e) {
+            e.preventDefault();
+            localStorage.clear(); 
+            window.location.reload(); 
+        };
+    }
+}, 500);
+</script>
+
+</body>
+</html>
